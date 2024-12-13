@@ -17,11 +17,11 @@ if not exist %relaciones_file% (echo DNI -> Matricula > %relaciones_file%)
 :menu_principal
 cls
 echo -------------------------------------------
-echo Terminal de Gestion de Vehiculos
+echo Terminal de Gestión de Vehiculos
 echo -------------------------------------------
-echo 1. Gestion de Conductores
-echo 2. Gestion de Vehiculos
-echo 3. Gestion de Relaciones (Conductor-Vehiculo)
+echo 1. Gestión de Conductores
+echo 2. Gestión de Vehiculos
+echo 3. Gestión de Relaciones (Conductor-Vehiculo)
 echo 4. Consultas Especiales
 echo 5. Salir
 echo -------------------------------------------
@@ -38,9 +38,9 @@ goto menu_principal
 :menu_conductores
 cls
 echo -------------------------------------------
-echo Gestion de Conductores
+echo Gestión de Conductores
 echo -------------------------------------------
-echo 1. Anadir conductor
+echo 1. Añadir conductor
 echo 2. Eliminar conductor
 echo 3. Listar conductores
 echo 4. Buscar conductor por DNI
@@ -50,7 +50,7 @@ echo 7. Regresar al menu principal
 echo -------------------------------------------
 set /p opcion=Selecciona una opcion:
 
-if "%opcion%"=="1" goto anadir_conductor
+if "%opcion%"=="1" goto Añadir_conductor
 if "%opcion%"=="2" goto eliminar_conductor
 if "%opcion%"=="3" goto listar_conductores
 if "%opcion%"=="4" goto buscar_conductor
@@ -61,12 +61,12 @@ if "%opcion%"=="7" goto menu_principal
 goto menu_conductores
 
 :: Funciones de conductores
-:anadir_conductor
+:Añadir_conductor
 cls
 echo Introduzca los datos del conductor en el formato: DNI,Nombre,Apellido,Fecha_Carnet
 set /p conductor_datos=Datos:
 echo %conductor_datos% >> %conductor_file%
-echo Conductor anadido correctamente.
+echo Conductor añadido correctamente.
 pause
 goto menu_conductores
 
@@ -146,9 +146,9 @@ goto menu_conductores
 :menu_vehiculos
 cls
 echo -------------------------------------------
-echo Gestion de Vehiculos
+echo Gestión de Vehiculos
 echo -------------------------------------------
-echo 1. Anadir vehiculo
+echo 1. Añadir vehiculo
 echo 2. Eliminar vehiculo
 echo 3. Listar vehiculos
 echo 4. Buscar vehiculo por matricula
@@ -160,7 +160,7 @@ echo 9. Regresar al menu principal
 echo -------------------------------------------
 set /p opcion=Selecciona una opcion:
 
-if "%opcion%"=="1" goto anadir_vehiculo
+if "%opcion%"=="1" goto Añadir_vehiculo
 if "%opcion%"=="2" goto eliminar_vehiculo
 if "%opcion%"=="3" goto listar_vehiculos
 if "%opcion%"=="4" goto buscar_vehiculo
@@ -170,12 +170,12 @@ if "%opcion%"=="7" goto listar_vehiculos_marca
 if "%opcion%"=="8" goto listar_vehiculos_sin_conductor
 if "%opcion%"=="9" goto menu_principal
 
-:anadir_vehiculo
+:Añadir_vehiculo
 cls
 echo Introduzca los datos del vehiculo en el formato: Matricula,Marca,Tipo,Atributo,Valor
 set /p vehiculo_datos=Datos:
 echo %vehiculo_datos% >> %vehiculo_file%
-echo Vehiculo anadido correctamente.
+echo Vehiculo añadido correctamente.
 pause
 goto menu_vehiculos
 
@@ -244,7 +244,7 @@ goto menu_vehiculos
 :menu_relaciones
 cls
 echo -------------------------------------------
-echo Gestion de Relaciones (Conductor-Vehiculo)
+echo Gestión de Relaciones (Conductor-Vehiculo)
 echo -------------------------------------------
 echo 1. Asignar conductor a vehiculo
 echo 2. Eliminar relacion conductor-vehiculo
