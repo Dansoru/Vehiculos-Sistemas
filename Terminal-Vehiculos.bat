@@ -2,10 +2,17 @@
 cls
 setlocal enabledelayedexpansion
 
+chcp 65001 > nul
+
 :: Definir las rutas de los archivos de datos
-set conductor_file=conductores.txt
-set vehiculo_file=vehiculos.txt
-set relaciones_file=relaciones.txt
+set conductor_file=conductores.csv
+set vehiculo_file=vehiculos.csv
+set relaciones_file=relaciones.csv
+
+:: Crear los archivos si no existen
+if not exist %conductor_file% (echo DNI,Nombre,Apellido,Fecha_Carnet > %conductor_file%)
+if not exist %vehiculo_file% (echo Matricula,Marca,Tipo,Atributo,Valor > %vehiculo_file%)
+if not exist %relaciones_file% (echo DNI -> Matricula > %relaciones_file%)
 
 :menu_principal
 cls
@@ -56,7 +63,7 @@ goto menu_conductores
 :: Funciones de conductores
 :anadir_conductor
 cls
-echo Introduzca los datos del conductor (DNI, Nombre, Apellido, Fecha_Carnet):
+echo Introduzca los datos del conductor en el formato: DNI,Nombre,Apellido,Fecha_Carnet
 set /p conductor_datos=Datos:
 echo %conductor_datos% >> %conductor_file%
 echo Conductor anadido correctamente.
@@ -66,8 +73,8 @@ goto menu_conductores
 :eliminar_conductor
 cls
 set /p dni=Introduce el DNI del conductor a eliminar:
-findstr /v /i "%dni%" %conductor_file% > temp.txt
-move /y temp.txt %conductor_file%
+findstr /v /i "%dni%," %conductor_file% > temp.csv
+move /y temp.csv %conductor_file%
 echo Conductor eliminado correctamente.
 pause
 goto menu_conductores
@@ -82,29 +89,57 @@ goto menu_conductores
 :buscar_conductor
 cls
 set /p dni=Introduce el DNI del conductor a buscar:
-findstr /i "%dni%" %conductor_file%
+findstr /i "%dni%," %conductor_file%
 pause
 goto menu_conductores
 
 :actualizar_conductor
 cls
 set /p dni=Introduce el DNI del conductor a actualizar:
-findstr /v /i "%dni%" %conductor_file% > temp.txt
-set /p nuevo_datos=Introduce los nuevos datos del conductor (DNI, Nombre, Apellido, Fecha_Carnet):
-echo %nuevo_datos% >> %conductor_file%
-move /y temp.txt %conductor_file%
+findstr /v /i "%dni%," %conductor_file% > temp.csv
+set /p nuevo_datos=Introduce los nuevos datos del conductor (DNI,Nombre,Apellido,Fecha_Carnet):
+echo %nuevo_datos% >> temp.csv
+move /y temp.csv %conductor_file%
 echo Conductor actualizado correctamente.
 pause
 goto menu_conductores
 
 :listar_conductores_antiguedad
 cls
-set /p anos_min=Introduce los anos minimos de carnet:
-echo Conductores con mas de %anos_min% anos de carnet:
-for /f "tokens=4 delims=," %%a in (%conductor_file%) do (
-    set /a anos=%%a
-    if !anos! geq %anos_min% echo %%a
+:: Obtener la fecha actual en formato AAAA-MM-DD
+for /f "tokens=2 delims==" %%A in ('"wmic os get localdatetime /value"') do set datetime=%%A
+set year=%datetime:~0,4%
+
+:: Solicitar número mínimo de años
+set /p min_years=Introduce el número mínimo de años de carnet: 
+
+cls
+echo ==========================================
+echo   CONDUCTORES CON AL MENOS %min_years% AÑOS DE CARNET
+echo ==========================================
+
+:: Ruta del archivo CSV (modifica si está en otra ubicación)
+set csv_file=conductores.csv
+
+:: Leer el archivo línea por línea
+for /f "skip=1 tokens=1,2,3,4 delims=," %%A in (%csv_file%) do (
+    set dni=%%A
+    set nombre=%%B
+    set apellido=%%C
+    set fecha_carnet=%%D
+
+    :: Extraer el año de la fecha del carnet
+    set year_carnet=!fecha_carnet:~0,4!
+
+    :: Calcular años de carnet
+    set /a years_carnet=%year% - !year_carnet!
+
+    :: Comparar años de carnet con el mínimo requerido
+    if !years_carnet! GEQ %min_years% (
+        echo DNI: !dni! - Nombre: !nombre! !apellido! - Años de carnet: !years_carnet!
+    )
 )
+
 pause
 goto menu_conductores
 
@@ -135,12 +170,9 @@ if "%opcion%"=="7" goto listar_vehiculos_marca
 if "%opcion%"=="8" goto listar_vehiculos_sin_conductor
 if "%opcion%"=="9" goto menu_principal
 
-goto menu_vehiculos
-
-:: Funciones de vehiculos
 :anadir_vehiculo
 cls
-echo Introduzca los datos del vehiculo (Matricula, Marca, Tipo, Atributo, Valor):
+echo Introduzca los datos del vehiculo en el formato: Matricula,Marca,Tipo,Atributo,Valor
 set /p vehiculo_datos=Datos:
 echo %vehiculo_datos% >> %vehiculo_file%
 echo Vehiculo anadido correctamente.
@@ -150,8 +182,8 @@ goto menu_vehiculos
 :eliminar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a eliminar:
-findstr /v /i "%matricula%" %vehiculo_file% > temp.txt
-move /y temp.txt %vehiculo_file%
+findstr /v /i "%matricula%," %vehiculo_file% > temp.csv
+move /y temp.csv %vehiculo_file%
 echo Vehiculo eliminado correctamente.
 pause
 goto menu_vehiculos
@@ -166,46 +198,46 @@ goto menu_vehiculos
 :buscar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a buscar:
-findstr /i "%matricula%" %vehiculo_file%
+findstr /i "%matricula%," %vehiculo_file%
 pause
 goto menu_vehiculos
 
 :actualizar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a actualizar:
-findstr /v /i "%matricula%" %vehiculo_file% > temp.txt
-set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula, Marca, Tipo, Atributo, Valor):
-echo %nuevo_datos% >> %vehiculo_file%
-move /y temp.txt %vehiculo_file%
+findstr /v /i "%matricula%," %vehiculo_file% > temp.csv
+set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula,Marca,Tipo,Atributo,Valor):
+echo %nuevo_datos% >> temp.csv
+move /y temp.csv %vehiculo_file%
 echo Vehiculo actualizado correctamente.
 pause
 goto menu_vehiculos
 
 :listar_vehiculos_tipo
 cls
-set /p tipo=Introduce el tipo de vehiculo (Coche, Moto, Camion):
-for /f "tokens=2,3,4,5 delims=," %%a in (%vehiculo_file%) do (
-    if "%%c"=="%tipo%" echo %%a, %%b, %%c, %%d, %%e
-)
+set /p tipo=Introduce el tipo de vehiculo a buscar:
+echo Vehiculos de tipo %tipo%:
+findstr /i "%tipo%" %vehiculo_file%
 pause
 goto menu_vehiculos
 
 :listar_vehiculos_marca
 cls
-set /p marca=Introduce la marca de los vehiculos:
-for /f "tokens=2,3,4,5 delims=," %%a in (%vehiculo_file%) do (
-    if "%%b"=="%marca%" echo %%a, %%b, %%c, %%d, %%e
-)
+set /p marca=Introduce la marca de vehiculo a buscar:
+echo Vehiculos de la marca %marca%:
+findstr /i "%marca%" %vehiculo_file%
 pause
 goto menu_vehiculos
 
 :listar_vehiculos_sin_conductor
 cls
 echo Vehiculos sin conductor asignado:
-for /f "tokens=1,2 delims=," %%a in (%vehiculo_file%) do (
-    findstr /i "%%a" %conductor_file% >nul
-    if errorlevel 1 echo %%a
+for /f "tokens=2 delims=," %%A in (%relaciones_file%) do @echo %%A > temp_matriculas.csv
+for /f "tokens=1 delims=," %%B in (%vehiculo_file%) do (
+    findstr /i /v "%%B" temp_matriculas.csv > nul
+    if errorlevel 1 echo %%B
 )
+del temp_matriculas.csv
 pause
 goto menu_vehiculos
 
@@ -214,102 +246,85 @@ cls
 echo -------------------------------------------
 echo Gestion de Relaciones (Conductor-Vehiculo)
 echo -------------------------------------------
-echo 1. Asignar vehiculo a conductor
-echo 2. Eliminar vehiculo de conductor
-echo 3. Consultar vehiculos de un conductor
-echo 4. Consultar conductores de un vehiculo
+echo 1. Asignar conductor a vehiculo
+echo 2. Eliminar relacion conductor-vehiculo
+echo 3. Listar relaciones existentes
+echo 4. Buscar relacion por DNI o Matricula
 echo 5. Regresar al menu principal
 echo -------------------------------------------
 set /p opcion=Selecciona una opcion:
 
-if "%opcion%"=="1" goto asignar_vehiculo_conductor
-if "%opcion%"=="2" goto eliminar_vehiculo_conductor
-if "%opcion%"=="3" goto consultar_vehiculos_conductor
-if "%opcion%"=="4" goto consultar_conductores_vehiculo
+if "%opcion%"=="1" goto asignar_relacion
+if "%opcion%"=="2" goto eliminar_relacion
+if "%opcion%"=="3" goto listar_relaciones
+if "%opcion%"=="4" goto buscar_relacion
 if "%opcion%"=="5" goto menu_principal
 
 goto menu_relaciones
 
-:: Funciones de relaciones
-:asignar_vehiculo_conductor
+:asignar_relacion
 cls
-set /p dni=Introduce el DNI del conductor:
-set /p matricula=Introduce la matricula del vehiculo:
-echo %dni% -> %matricula% >> %relaciones_file%
-echo Vehiculo asignado correctamente.
+echo Introduzca los datos de la relacion en el formato: DNI,Matricula
+set /p relacion_datos=Datos:
+echo %relacion_datos% >> %relaciones_file%
+echo Relacion asignada correctamente.
 pause
 goto menu_relaciones
 
-:eliminar_vehiculo_conductor
+:eliminar_relacion
 cls
-set /p dni=Introduce el DNI del conductor:
-set /p matricula=Introduce la matricula del vehiculo:
-findstr /v /i "%dni% -> %matricula%" %relaciones_file% > temp.txt
-move /y temp.txt %relaciones_file%
+set /p filtro=Introduce el DNI o la Matricula para eliminar la relacion:
+findstr /v /i "%filtro%" %relaciones_file% > temp.csv
+move /y temp.csv %relaciones_file%
 echo Relacion eliminada correctamente.
 pause
 goto menu_relaciones
 
-:consultar_vehiculos_conductor
+:listar_relaciones
 cls
-set /p dni=Introduce el DNI del conductor:
-echo Vehiculos asignados al conductor:
-findstr /i "%dni%" %relaciones_file%
+echo Lista de relaciones existentes:
+type %relaciones_file%
 pause
 goto menu_relaciones
 
-:consultar_conductores_vehiculo
+:buscar_relacion
 cls
-set /p matricula=Introduce la matricula del vehiculo:
-echo Conductores asignados a este vehiculo:
-findstr /i "%matricula%" %relaciones_file%
+set /p filtro=Introduce el DNI o la Matricula a buscar:
+findstr /i "%filtro%" %relaciones_file%
 pause
 goto menu_relaciones
+
+goto menu_principal
 
 :menu_consultas
 cls
 echo -------------------------------------------
 echo Consultas Especiales
 echo -------------------------------------------
-echo 1. Consultar vehiculos por tipo
-echo 2. Consultar vehiculos de una marca
-echo 3. Consultar conductores con mas de X anos de carnet
-echo 4. Regresar al menu principal
+echo 1. Listar conductores con mas de un vehiculo asignado
+echo 2. Buscar vehiculos por tipo o atributo especifico
+echo 3. Regresar al menu principal
 echo -------------------------------------------
 set /p opcion=Selecciona una opcion:
 
-if "%opcion%"=="1" goto consultar_vehiculos_tipo
-if "%opcion%"=="2" goto consultar_vehiculos_marca
-if "%opcion%"=="3" goto consultar_conductores_anos
-if "%opcion%"=="4" goto menu_principal
+if "%opcion%"=="1" goto listar_conductores_multiples
+if "%opcion%"=="2" goto buscar_vehiculos_atributo
+if "%opcion%"=="3" goto menu_principal
 
 goto menu_consultas
 
-:: Funciones de consultas especiales
-:consultar_vehiculos_tipo
+:listar_conductores_multiples
 cls
-set /p tipo=Introduce el tipo de vehiculo (Coche, Moto, Camion):
-for /f "tokens=2,3,4,5 delims=," %%a in (%vehiculo_file%) do (
-    if "%%c"=="%tipo%" echo %%a, %%b, %%c, %%d, %%e
-)
+echo Conductores con mas de un vehiculo asignado:
+(for /f "tokens=1 delims=," %%A in (%relaciones_file%) do @echo %%A) | sort | uniq -d > temp_conductores.csv
+(for /f "tokens=1 delims=," %%A in (temp_conductores.csv) do findstr /i /c:"%%A" %conductor_file%)
+del temp_conductores.csv
 pause
 goto menu_consultas
 
-:consultar_vehiculos_marca
+:buscar_vehiculos_atributo
 cls
-set /p marca=Introduce la marca de los vehiculos:
-for /f "tokens=2,3,4,5 delims=," %%a in (%vehiculo_file%) do (
-    if "%%b"=="%marca%" echo %%a, %%b, %%c, %%d, %%e
-)
-pause
-goto menu_consultas
-
-:consultar_conductores_anos
-cls
-set /p anos_min=Introduce los anos minimos de carnet:
-for /f "tokens=4 delims=," %%a in (%conductor_file%) do (
-    set /a anos=%%a
-    if !anos! geq %anos_min% echo %%a
-)
+set /p atributo=Introduce el atributo o tipo de vehiculo a buscar:
+findstr /i /c:"%atributo%" %vehiculo_file%
 pause
 goto menu_consultas
