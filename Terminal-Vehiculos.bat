@@ -408,7 +408,7 @@ goto menu_multas
 :buscar_multa
 cls
 set /p id=Introduce el ID de la multa a buscar:
-findstr /i "%id%," "%multas_file%"
+findstr /i "%ID%," "%multas_file%"
 pause
 goto menu_multas
 
