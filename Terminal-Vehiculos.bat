@@ -32,6 +32,19 @@ if not exist "%multas_file%" (
     echo ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha > "%multas_file%"
 )
 
+:: Abrir una nueva ventana CMD para mostrar los contenidos de los archivos
+start cmd /k ^
+    "echo CONTENIDO DE LOS ARCHIVOS CSV: & ^
+    echo. & ^
+    echo [Conductores] & type \"%conductor_file%\" & ^
+    echo. & ^
+    echo [Vehiculos] & type \"%vehiculo_file%\" & ^
+    echo. & ^
+    echo [Relaciones] & type \"%relaciones_file%\" & ^
+    echo. & ^
+    echo [Multas] & type \"%multas_file%\" & ^
+    pause
+
 :: Continuar con el menú principal
 :menu_principal
 cls
@@ -93,12 +106,45 @@ goto menu_conductores
 
 :eliminar_conductor
 cls
-set /p dni=Introduce el DNI del conductor a eliminar:
-findstr /v /i "%dni%," "%conductor_file%" > temp.csv
-move /y temp.csv "%conductor_file%"
+echo ==========================================
+echo          ELIMINAR CONDUCTOR
+echo ==========================================
+echo Lista de conductores:
+echo ------------------------------------------
+:: Mostrar los datos con números para seleccionar
+set /a line_num=1
+for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
+    echo !line_num!. %%A
+    set /a line_num+=1
+)
+
+:: Pedir la línea a eliminar
+echo ------------------------------------------
+set /p seleccion=Introduce el número del conductor a eliminar: 
+
+:: Validar entrada
+if "%seleccion%"=="" (
+    echo No se seleccionó ninguna línea.
+    pause
+    goto menu_conductores
+)
+
+:: Filtrar las líneas que no coinciden con la seleccionada
+set /a current_line=1
+(
+    echo DNI,Nombre,Apellido,Fecha_Carnet
+    for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
+        if "!current_line!" NEQ "%seleccion%" echo %%A
+        set /a current_line+=1
+    )
+) > temp.csv
+
+:: Reemplazar el archivo original
+move /y temp.csv "%conductor_file%" > nul
 echo Conductor eliminado correctamente.
 pause
 goto menu_conductores
+
 
 :listar_conductores
 cls
