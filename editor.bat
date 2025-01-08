@@ -1,6 +1,9 @@
 @echo off
 cls
 setlocal enabledelayedexpansion
+title Editor de Parking
+
+powershell -command "Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class Window {[DllImport(\"user32.dll\")] public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);}'"
 
 chcp 65001 > nul
 
