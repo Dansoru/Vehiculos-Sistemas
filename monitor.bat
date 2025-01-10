@@ -64,6 +64,8 @@ for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do 
   echo --------------------------------------------------------------------------------
     :: Llamar a las funciones para buscar vehículos y multas
     call :buscarRelacionVehiculo %%A
+    echo.
+    echo.
 
 )
 
@@ -78,12 +80,24 @@ exit
 setlocal
 set "DNI=%~1"
 for /f "usebackq skip=1 tokens=1,2 delims=;" %%F in ("%relaciones_file%") do (
-
     if "%%F"=="%DNI%" (
         :: Mostrar la relación DNI - Matrícula
         echo - Relacionado con Vehiculo: %%G
+        call :buscarVehiculo %%G
     )
 )
-
 endlocal
+
+:buscarVehiculo
+setlocal
+set "Matricula=%~1"
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=," %%H in ("%vehiculo_file%") do (
+    if "%%H"=="%Matricula%" (
+        :: Mostrar los detalles del vehículo
+       echo funionaaa
+    )
+)
+endlocal
+
+
 
