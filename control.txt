@@ -1,0 +1,13 @@
+CONDUCTORES:
+===================================================
+ID: 1   | Nombre: Juan Perez   | DNI: 12345678A | Fecha: 12/06/2002
+--------------------------------------------------------------------------------
+- Vehiculo: Seat (1234ABC) [Rojo]
+- Multa: Exceso de velocidad (100€) **[Pendiente]**
+
+ID: 2   | Nombre: Maria Lopez   | DNI: 87654321B
+---------------------------------------------------
+- Vehiculo: Ford (5678DEF) [Negro]
+- Multa: Estacionamiento indebido (50€) **[Pendiente]**
+
+===================================================
