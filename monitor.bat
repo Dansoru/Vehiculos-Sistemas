@@ -2,18 +2,39 @@
 setlocal EnableDelayedExpansion
 title Monitor de Parking
 
-powershell -command "Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class Window {[DllImport(\"user32.dll\")] public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);}'"
+chcp 65001 > nul
 
-:inicio
 cls
-echo === MONITOR DE PARKING ===
+echo ================================================
+echo          --- Monitor de Estado ---
+echo ================================================
 echo.
-type "%conductor_file%"
+echo Observando cambios en tiempo real...
+echo ================================================
 echo.
-type "%vehiculo_file%"
-echo.
-type "%relaciones_file%"
-echo.
-type "%multas_file%"
-timeout /t 2 /nobreak >nul
-goto inicio
+
+echo. > control.txt
+
+:loop
+if exist control.txt (
+    cls
+    echo ================================================
+    echo          --- Monitor de Estado ---
+    echo ================================================
+    echo.
+    echo Última actualización:
+    echo --------------------------------
+    type control.txt
+    echo --------------------------------
+    echo.
+
+    findstr /i "SALIR" control.txt >nul 2>&1
+    if not errorlevel 1 (
+        echo Recibido comando de cierre. Finalizando monitor...
+        exit
+    )
+
+    del control.txt
+)
+timeout /t 1 >nul
+goto loop

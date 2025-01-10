@@ -31,7 +31,6 @@ echo.
 echo.
 echo                                                    Bienvenido       
 echo.                                                                                                                                  
-
 pause
 echo.
 echo.

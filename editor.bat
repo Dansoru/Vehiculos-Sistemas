@@ -3,7 +3,6 @@ cls
 setlocal enabledelayedexpansion
 title Editor de Parking
 
-
 chcp 65001 > nul
 
 :: Establecer la carpeta Base de Datos
@@ -12,6 +11,10 @@ set "base_dir=%cd%\Base de Datos"
 :: Crear la carpeta Base de Datos si no existe
 if not exist "%base_dir%" (
     mkdir "%base_dir%"
+)
+
+if not exist control.txt (
+    echo. > control.txt
 )
 
 :: Definir las rutas completas de los archivos
@@ -34,19 +37,6 @@ if not exist "%multas_file%" (
     echo ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha > "%multas_file%"
 )
 
-:: Abrir una nueva ventana CMD para mostrar los contenidos de los archivos
-start cmd /k ^
-    "echo CONTENIDO DE LOS ARCHIVOS CSV: & ^
-    echo. & ^
-    echo [Conductores] & type \"%conductor_file%\" & ^
-    echo. & ^
-    echo [Vehiculos] & type \"%vehiculo_file%\" & ^
-    echo. & ^
-    echo [Relaciones] & type \"%relaciones_file%\" & ^
-    echo. & ^
-    echo [Multas] & type \"%multas_file%\" & ^
-    pause
-
 :: Continuar con el menú principal
 :menu_principal
 cls
@@ -67,7 +57,12 @@ if "%opcion%"=="2" goto menu_vehiculos
 if "%opcion%"=="3" goto menu_relaciones
 if "%opcion%"=="4" goto menu_multas
 if "%opcion%"=="5" goto menu_consultas
-if "%opcion%"=="6" exit
+if "%opcion%"=="6" (
+
+echo SALIR > control.txt
+
+exit
+)
 
 goto menu_principal
 
@@ -78,7 +73,7 @@ echo Gestion de Conductores
 echo -------------------------------------------
 echo 1. Anadir conductor
 echo 2. Eliminar conductor
-echo 3. Listar conductores
+echo 3. Refescar con conductores
 echo 4. Buscar conductor por DNI
 echo 5. Actualizar datos del conductor
 echo 6. Listar conductores con mas de X anos de carnet
@@ -109,36 +104,36 @@ goto menu_conductores
 :eliminar_conductor
 cls
 echo ==========================================
-echo          ELIMINAR CONDUCTOR
+echo  ELIMINAR CONDUCTOR
 echo ==========================================
 echo Lista de conductores:
 echo ------------------------------------------
 :: Mostrar los datos con números para seleccionar
 set /a line_num=1
 for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
-    echo !line_num!. %%A
-    set /a line_num+=1
+  echo !line_num!. %%A
+  set /a line_num+=1
 )
 
 :: Pedir la línea a eliminar
 echo ------------------------------------------
-set /p seleccion=Introduce el número del conductor a eliminar: 
+set /p seleccion=Introduce el número del conductor a eliminar:
 
 :: Validar entrada
 if "%seleccion%"=="" (
-    echo No se seleccionó ninguna línea.
-    pause
-    goto menu_conductores
+  echo No se seleccionó ninguna línea.
+  pause
+  goto menu_conductores
 )
 
 :: Filtrar las líneas que no coinciden con la seleccionada
 set /a current_line=1
 (
-    echo DNI,Nombre,Apellido,Fecha_Carnet
-    for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
-        if "!current_line!" NEQ "%seleccion%" echo %%A
-        set /a current_line+=1
-    )
+echo DNI,Nombre,Apellido,Fecha_Carnet
+for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
+  if "!current_line!" NEQ "%seleccion%" echo %%A
+  set /a current_line+=1
+)
 ) > temp.csv
 
 :: Reemplazar el archivo original
@@ -147,11 +142,10 @@ echo Conductor eliminado correctamente.
 pause
 goto menu_conductores
 
-
 :listar_conductores
 cls
 echo Lista de conductores:
-type "%conductor_file%"
+type "%conductor_file%"> control.txt
 pause
 goto menu_conductores
 
@@ -180,11 +174,11 @@ for /f "tokens=2 delims==" %%A in ('"wmic os get localdatetime /value"') do set 
 set year=%datetime:~0,4%
 
 :: Solicitar número mínimo de años
-set /p min_years=Introduce el número mínimo de años de carnet: 
+set /p min_years=Introduce el número mínimo de años de carnet:
 
 cls
 echo ==========================================
-echo   CONDUCTORES CON AL MENOS %min_years% AÑOS DE CARNET
+echo  CONDUCTORES CON AL MENOS %min_years% AÑOS DE CARNET
 echo ==========================================
 
 :: Ruta del archivo CSV (modifica si está en otra ubicación)
@@ -192,21 +186,21 @@ set csv_file=conductores.csv
 
 :: Leer el archivo línea por línea
 for /f "skip=1 tokens=1,2,3,4 delims=," %%A in ("%csv_file%") do (
-    set dni=%%A
-    set nombre=%%B
-    set apellido=%%C
-    set fecha_carnet=%%D
-
-    :: Extraer el año de la fecha del carnet
-    set year_carnet=!fecha_carnet:~0,4!
-
-    :: Calcular años de carnet
-    set /a years_carnet=%year% - !year_carnet!
-
-    :: Comparar años de carnet con el mínimo requerido
-    if !years_carnet! GEQ %min_years% (
-        echo DNI: !dni! - Nombre: !nombre! !apellido! - Años de carnet: !years_carnet!
-    )
+  set dni=%%A
+  set nombre=%%B
+  set apellido=%%C
+  set fecha_carnet=%%D
+  
+  :: Extraer el año de la fecha del carnet
+  set year_carnet=!fecha_carnet:~0,4!
+  
+  :: Calcular años de carnet
+  set /a years_carnet=%year% - !year_carnet!
+  
+  :: Comparar años de carnet con el mínimo requerido
+  if !years_carnet! GEQ %min_years% (
+    echo DNI: !dni! - Nombre: !nombre! !apellido! - Años de carnet: !years_carnet!
+  )
 )
 
 pause
@@ -303,8 +297,8 @@ cls
 echo Vehiculos sin conductor asignado:
 for /f "tokens=2 delims=," %%A in ("%relaciones_file%") do @echo %%A > temp_matriculas.csv
 for /f "tokens=1 delims=," %%B in ("%vehiculo_file%") do (
-    findstr /i /v "%%B" temp_matriculas.csv > nul
-    if errorlevel 1 echo %%B
+  findstr /i /v "%%B" temp_matriculas.csv > nul
+  if errorlevel 1 echo %%B
 )
 del temp_matriculas.csv
 pause
@@ -386,8 +380,8 @@ goto menu_consultas
 cls
 echo Lista de conductores con mas de un vehiculo:
 for /f "tokens=1 delims=," %%A in ("%relaciones_file%") do (
-    findstr /c:"%%A" "%relaciones_file%" > nul
-    if !errorlevel! gtr 1 echo %%A
+  findstr /c:"%%A" "%relaciones_file%" > nul
+  if !errorlevel! gtr 1 echo %%A
 )
 pause
 goto menu_consultas
@@ -398,7 +392,7 @@ set /p dni=Introduce el DNI del conductor:
 echo Vehiculos asignados al conductor %dni%:
 findstr /i "%dni%" "%relaciones_file%" > temp.csv
 for /f "tokens=2 delims=," %%B in (temp.csv) do (
-    findstr /i "%%B" "%vehiculo_file%"
+  findstr /i "%%B" "%vehiculo_file%"
 )
 del temp.csv
 pause
