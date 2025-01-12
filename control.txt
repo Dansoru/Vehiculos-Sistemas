@@ -1,1 +1,11 @@
-atento brotheee
+ 
+[12/01/2025 20:19:03,63] === Acceder a la lista de conductores === 
+[12/01/2025 20:19:42,25] ======== Añadir conductor ======== 
+      + Datos: 122;Rafa;Maori;12/23/5656 
+[12/01/2025 20:21:34,97] ======== Buscar conductor ======== 
+       12 
+[12/01/2025 20:21:47,24] ======== Buscar conductor ======== 
+       12 
+[12/01/2025 20:22:23,93] ======== Actualizar conductor ======== 
+      ~ Actualizado conductor con DNI: 12 
+      + Nuevos datos: 122;Rafa;Moreno;12/23/5656 
