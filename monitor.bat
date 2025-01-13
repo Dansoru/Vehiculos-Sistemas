@@ -110,7 +110,7 @@ if not "%PaseControl%" == "%NEWcontrol%" (
     :: Actualiza el valor de PaseControl con el nuevo contenido
     set "PaseControl=%NEWcontrol%"
 
-    timeout /t 5 /nobreak >nul
+    timeout /t 1 /nobreak >nul
 
     goto inicio
 )
