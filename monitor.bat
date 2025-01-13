@@ -86,6 +86,37 @@ echo Estacionamiento: Central Parking
 echo Fecha y hora: %date% - %time:~0,5%
 echo ---------------------------------------------------
 
+
+set "lastline="
+for /f "tokens=* delims=" %%A in (control.txt) do set "lastline=%%A"
+
+:: Eliminar fecha y hora de la línea si están presentes
+for /f "tokens=2,* delims=]" %%A in ("!lastline!") do set "lastline=%%B"
+
+echo "!lastline!"
+
+:: Comprobar si la última línea contiene el texto esperado
+if "!lastline!"==" === Acceder a la lista de conductores === " (
+    set "Listado=conductores"
+    call :conductores
+) else (
+    echo Esperando acción...
+)
+
+
+
+
+
+
+
+
+
+
+
+call :control
+
+:conductores
+setlocal
 :: Inicializar número de línea
 set /a line_number=1
 
@@ -109,43 +140,8 @@ for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do 
     echo.
 
 )
-
-echo ===================================================
-echo.
-echo ---------------------------------------------------
-echo Última acción registrada:
-echo.
-type control.txt
-echo.
-echo ---------------------------------------------------
-
-
-:bucle
-:: Espera un segundo antes de comprobar el archivo
-timeout /t 1 /nobreak >nul
-
-:: Lee el contenido actual de control.txt
-for /f "delims=" %%A in (%control_file%) do (
-    set "NEWcontrol=%%A"
-)
-
-:: Si el contenido ha cambiado, realiza la acción
-if not "%PaseControl%" == "%NEWcontrol%" (
-    echo El archivo ha cambiado. Ejecutando acción...
-
-    :: Aquí va la acción que deseas realizar cuando el archivo cambie
-    echo Cambios detectados, procesando...
-
-    :: Actualiza el valor de PaseControl con el nuevo contenido
-    set "PaseControl=%NEWcontrol%"
-
-    timeout /t 1 /nobreak >nul
-
-    goto inicio
-)
-
-goto bucle
-
+endlocal
+exit /b
 
 :buscarRelacionVehiculo
 setlocal
@@ -200,3 +196,42 @@ for /f "usebackq skip=1 tokens=1,2,3,4,5,6,7 delims=;" %%F in ("%multas_file%") 
 endlocal
 exit /b
 
+:control
+setlocal
+echo ===================================================
+echo.
+echo ---------------------------------------------------
+echo Última acción registrada:
+echo.
+type control.txt
+echo.
+echo ---------------------------------------------------
+
+:bucle
+:: Espera un segundo antes de comprobar el archivo
+timeout /t 1 /nobreak >nul
+
+:: Lee el contenido actual de control.txt
+for /f "delims=" %%A in (%control_file%) do (
+    set "NEWcontrol=%%A"
+)
+
+:: Si el contenido ha cambiado, realiza la acción
+if not "%PaseControl%" == "%NEWcontrol%" (
+    echo El archivo ha cambiado. Ejecutando acción...
+
+    :: Aquí va la acción que deseas realizar cuando el archivo cambie
+    echo Cambios detectados, procesando...
+
+    :: Actualiza el valor de PaseControl con el nuevo contenido
+    set "PaseControl=%NEWcontrol%"
+
+    timeout /t 1 /nobreak >nul
+
+    goto inicio
+)
+
+goto bucle
+
+endlocal
+exit /b
