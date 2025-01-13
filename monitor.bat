@@ -90,27 +90,45 @@ echo ---------------------------------------------------
 set "lastline="
 for /f "tokens=* delims=" %%A in (control.txt) do set "lastline=%%A"
 
+echo "!lastline!"
+
 :: Eliminar fecha y hora de la línea si están presentes
-for /f "tokens=2,* delims=]" %%A in ("!lastline!") do set "lastline=%%B"
+for /f "tokens=1,2 delims=]" %%A in ("!lastline!") do set "lastline=%%B"
 
 echo "!lastline!"
 
 :: Comprobar si la última línea contiene el texto esperado
 if "!lastline!"==" === Acceder a la lista de conductores === " (
     set "Listado=conductores"
-    call :conductores
-) else (
-    echo Esperando acción...
+)
+if "!lastline!"==" ==== Acceder a la lista de vehiculos ==== " (
+    set "Listado=vehiculos"
+)
+if "!lastline!"==" ==== Acceder a la lista de multas ==== " (
+    set "Listado=multas"
 )
 
+echo !Listado!
 
-
-
-
-
-
-
-
+if "!Listado!"=="conductores" (
+    call :conductores
+) else (
+    if "!Listado!"=="vehiculos" (
+        call :vehiculos
+        echo Se llama a los vehículos
+    ) else (
+        if "!Listado!"=="multas" (
+            call :multas
+            echo Se llama a las multas
+        ) else (
+            echo ********************************************
+            echo **                                        **
+            echo **       --- ESPERANDO ACCIÓN ---        **
+            echo **                                        **
+            echo ********************************************
+        )
+    )
+)
 
 
 call :control

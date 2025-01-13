@@ -604,11 +604,11 @@ cls
 echo Lista de multas:
 type "%multas_file%"
 (
-    echo [%date% %time%] ============ Listar multas ============
+    echo [%date% %time%] ==== Acceder a la lista de multas ==== 
     echo       > Consultada lista de multas
     echo.
 ) >> "control.txt"
-echo [%date% %time%] ============ Listar multas ============
+echo [%date% %time%] ==== Acceder a la lista de multas ==== 
 echo       > Consultada lista de multas
 echo.
 pause
