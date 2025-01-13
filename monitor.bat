@@ -161,6 +161,32 @@ for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do 
 endlocal
 exit /b
 
+:vehiculos
+setlocal
+
+:: Leer el archivo de vehiculos y mostrar la información
+echo VEHICULOS:
+echo ===================================================
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
+        echo %%C : %%A ^(%%B^) ^[%%D: %%E^]
+        echo ID: !formatted_id! ^| DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C
+    )
+)
+  
+  echo --------------------------------------------------------------------------------
+    :: Llamar a las funciones para buscar vehículos y multas
+    call :buscarRelacionConductor
+    echo.
+    echo.
+
+)
+endlocal
+exit /b
+
+
+
+
 :buscarRelacionVehiculo
 setlocal
 set "DNI_REL=%~1"
