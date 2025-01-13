@@ -536,11 +536,21 @@ if "%opcion%"=="6" goto menu_principal
 goto menu_multas
 
 :: Funciones de multas
+
 :anadir_multa
 cls
 echo Introduzca los datos de la multa en el formato: ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha
 set /p multa_datos=Datos:
 echo %multa_datos% >> "%multas_file%"
+echo.
+(
+    echo [%date% %time%] ============ Anadir multa ============
+    echo       + Datos: %multa_datos%
+
+) >> "control.txt"
+echo [%date% %time%] ============ Anadir multa ============
+echo       + Datos: %multa_datos%
+echo.
 echo Multa añadida correctamente.
 pause
 goto menu_multas
@@ -550,6 +560,14 @@ cls
 set /p id=Introduce el ID de la multa a eliminar:
 findstr /v /i "%id%," "%multas_file%" > temp.csv
 move /y temp.csv "%multas_file%"
+(
+    echo [%date% %time%] ============ Eliminar multa ============
+    echo       - Multa con ID: %id% eliminada
+    echo.
+) >> "control.txt"
+echo [%date% %time%] ============ Eliminar multa ============
+echo       - Multa con ID: %id% eliminada
+echo.
 echo Multa eliminada correctamente.
 pause
 goto menu_multas
@@ -557,13 +575,41 @@ goto menu_multas
 :listar_multas
 cls
 echo Lista de multas:
-echo [%date% %time%] === Acceder a la lista de conductores === >> "control.txt"pause
+type "%multas_file%"
+(
+    echo [%date% %time%] ============ Listar multas ============
+    echo       > Consultada lista de multas
+    echo.
+) >> "control.txt"
+echo [%date% %time%] ============ Listar multas ============
+echo       > Consultada lista de multas
+echo.
+pause
 goto menu_multas
 
 :buscar_multa
 cls
 set /p id=Introduce el ID de la multa a buscar:
-findstr /i "%ID%," "%multas_file%"
+findstr /i "%id%," "%multas_file%"
+if errorlevel 1 (
+    (
+        echo [%date% %time%] ============ Buscar multa ============
+        echo       ! Multa no encontrada con ID: %id%
+        echo.
+    ) >> "control.txt"
+    echo [%date% %time%] ============ Buscar multa ============
+    echo       ! Multa no encontrada con ID: %id%
+    echo.
+) else (
+    (
+        echo [%date% %time%] ============ Buscar multa ============
+        echo       ? Multa encontrada con ID: %id%
+        echo.
+    ) >> "control.txt"
+    echo [%date% %time%] ============ Buscar multa ============
+    echo       ? Multa encontrada con ID: %id%
+    echo.
+)
 pause
 goto menu_multas
 
@@ -571,9 +617,18 @@ goto menu_multas
 cls
 set /p id=Introduce el ID de la multa a actualizar:
 findstr /v /i "%id%," "%multas_file%" > temp.csv
-set /p nuevo_datos=Introduce los nuevos datos de la multa (ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha):
+set /p nuevo_datos=Introduce los nuevos datos de la multa (ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%multas_file%"
+(
+    echo [%date% %time%] ============ Actualizar multa ============
+    echo       * Multa actualizada: %nuevo_datos%
+    echo.
+) >> "control.txt"
+echo [%date% %time%] ============ Actualizar multa ============
+echo       * Multa actualizada: %nuevo_datos%
+echo.
 echo Multa actualizada correctamente.
 pause
 goto menu_multas
+
