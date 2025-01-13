@@ -71,9 +71,9 @@ echo WScript.Sleep 500 >> "%temp%\arrange.vbs"
 echo Shell.TileHorizontally >> "%temp%\arrange.vbs"
 
 REM Lanzar las ventanas con tamaño específico
-start "Editor de Parking" cmd /k mode con cols=85 lines=40 ^& color 0f ^& editor.bat
+start "Editor de Parking" cmd /k editor.bat
 timeout /t 1 /nobreak >nul
-start "Monitor de Parking" cmd /k mode con cols=85 lines=40 ^& color 0f ^& monitor.bat
+start "Monitor de Parking" cmd /k monitor.bat
 timeout /t 1 /nobreak >nul
 
 REM Ejecutar script VBS y limpiarlo

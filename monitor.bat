@@ -48,13 +48,42 @@ if not exist "%multas_file%" (
   echo ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha > "%multas_file%"
 )
 
+echo.
+echo.
+echo.
+echo.
+echo.
+echo                                  ================================================
+echo                                         --- ATENCIÓN: MONITOR DE PARKING ---
+echo                                  ================================================
+echo.
+echo                                  Por favor, posiciona esta ventana en la pestaña:
+echo.
+echo                                         I::::::::::::::::::::::::::::::I
+echo                                         I                              I
+echo                                         I                              I
+echo                                         I      Monitor de parquing     I
+echo                                         I                              I
+echo                                         I                              I
+echo                                         I::::::::::::::::::::::::::::::I
+echo.                                         
+echo.                                         
+echo.                                         
+echo.                                         
+echo.
+echo                                  ================================================
+echo.  
+pause
+
+
+
 :inicio
 cls
 echo ===================================================
 echo  --- Monitor de Estado ---
 echo ===================================================
 echo Estacionamiento: Central Parking
-echo Fecha y hora: %date% - %time:~0,8%
+echo Fecha y hora: %date% - %time:~0,5%
 echo ---------------------------------------------------
 
 :: Inicializar número de línea

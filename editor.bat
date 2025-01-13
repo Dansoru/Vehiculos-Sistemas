@@ -37,6 +37,33 @@ if not exist "%multas_file%" (
     echo ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha > "%multas_file%"
 )
 
+echo.
+echo.
+echo.
+echo.
+echo.
+echo                                  ================================================
+echo                                         --- ATENCIÓN: EDITOR DE PARKING ---
+echo                                  ================================================
+echo.
+echo                                  Por favor, posiciona esta ventana en la pestaña:
+echo.
+echo.                                         
+echo.                                         
+echo.                                         
+echo.                                         
+echo.                                         
+echo.                                         
+echo                                         I::::::::::::::::::::::::::::::I
+echo                                         I                              I
+echo                                         I      Editor de parquing      I
+echo                                         I                              I
+echo                                         I::::::::::::::::::::::::::::::I
+echo.
+echo                                  ================================================
+echo.  
+pause
+
 :: Continuar con el menú principal
 :menu_principal
 cls
