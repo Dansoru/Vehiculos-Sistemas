@@ -29,8 +29,8 @@ echo                R::::::R    R:::::R   OO::::::::OO   M:::::M               M
 echo                RRRRRRRR    RRRRRRR     OOOOOOOO     MMMMMMM               MMMMMMM     OOOOOOOO     
 echo.
 echo.
-echo                                                    Bienvenido       
-echo.                                                                                                                                  
+echo                                         © 2025 Rafael Moreno y Alex Rotaru                                                                                                                                  
+echo.
 pause
 echo.
 echo.

@@ -24,9 +24,8 @@ set "control_file=control.txt"
 
 :: Lee el contenido inicial de control.txt
 for /f "delims=" %%A in (%control_file%) do (
-    set "PaseControl=%%A"
+  set "PaseControl=%%A"
 )
-
 
 :: Definir las rutas completas de los archivos
 set "conductor_file=%base_dir%\conductores.csv"
@@ -75,8 +74,6 @@ echo                                  ==========================================
 echo.  
 pause
 
-
-
 :inicio
 cls
 echo ===================================================
@@ -86,49 +83,46 @@ echo Estacionamiento: Central Parking
 echo Fecha y hora: %date% - %time:~0,5%
 echo ---------------------------------------------------
 
-
 set "lastline="
 for /f "tokens=* delims=" %%A in (control.txt) do set "lastline=%%A"
 
 if "!lastline!"=="SALIR " (
-    echo DEBERIA SALIR
-    echo. > control.txt
-    exit
+  echo DEBERIA SALIR
+  echo. > control.txt
+  exit
 )
 :: Eliminar fecha y hora de la línea si están presentes
 for /f "tokens=1,2 delims=]" %%A in ("!lastline!") do set "lastline=%%B"
 
 if "!lastline!"==" ==== Acceder a la lista de vehiculos ==== " (
-    set "Listado=vehiculos"
+  set "Listado=vehiculos"
 )
 if "!lastline!"==" === Acceder a la lista de conductores === " (
-    set "Listado=conductores"
+  set "Listado=conductores"
 )
 if "!lastline!"==" ==== Acceder a la lista de multas ==== " (
-    set "Listado=multas"
-    
+  set "Listado=multas"
+  
 )
-
 
 if "!Listado!"=="conductores" (
-    call :conductores
-) else (
-    if "!Listado!"=="vehiculos" (
-        call :vehiculos
+  call :conductores
+  ) else (
+  if "!Listado!"=="vehiculos" (
+    call :vehiculos
     ) else (
-        if "!Listado!"=="multas" (
-            call :multas
-            echo Se llama a las multas
-        ) else (
-            echo ********************************************
-            echo **                                        **
-            echo **       --- ESPERANDO ACCIÓN ---        **
-            echo **                                        **
-            echo ********************************************
-        )
+    if "!Listado!"=="multas" (
+      call :multas
+      echo Se llama a las multas
+      ) else (
+      echo ********************************************
+      echo **                                        **
+      echo **         --- ESPERANDO ACCIÓN ---       **
+      echo **                                        **
+      echo ********************************************
     )
+  )
 )
-
 
 call :control
 
@@ -152,11 +146,11 @@ for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do 
   
   set /a line_number+=1
   echo --------------------------------------------------------------------------------
-    :: Llamar a las funciones para buscar vehículos y multas
-    call :buscarRelacionVehiculo %%A
-    echo.
-    echo.
-
+  :: Llamar a las funciones para buscar vehículos y multas
+  call :buscarRelacionVehiculo %%A
+  echo.
+  echo.
+  
 )
 endlocal
 exit /b
@@ -170,16 +164,16 @@ echo ===================================================
 echo.
 
 for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
-        echo %%C ^| Matricula: %%A ^(%%B^) ^[%%D: %%E^]
-    
-
+  echo %%C ^| Matricula: %%A ^(%%B^) ^[%%D: %%E^]
+  
+  
   
   echo --------------------------------------------------------------------------------
-    :: Llamar a las funciones para buscar vehículos y multas
-    call :buscarRelacionConductor %%A
-    echo.
-    echo.
-
+  :: Llamar a las funciones para buscar vehículos y multas
+  call :buscarRelacionConductor %%A
+  echo.
+  echo.
+  
 )
 endlocal
 exit /b
@@ -193,21 +187,20 @@ echo ===================================================
 echo.
 
 for /f "usebackq skip=1 tokens=1,2,3,4,5,6,7 delims=;" %%A in ("%multas_file%") do (
-    echo Multa %%A: ^(%%E€^) **^[%%F^]** - %%G ^| "%%D"
-    
-
+  echo Multa %%A: ^(%%E€^) **^[%%F^]** - %%G ^| "%%D"
+  
+  
   
   echo --------------------------------------------------------------------------------
-    :: Llamar a las funciones para buscar vehículos y multas
-    call :buscarConductor %%B
-    echo.
-    call :buscarVehiculo %%C
-    echo.
-    echo.
+  :: Llamar a las funciones para buscar vehículos y multas
+  call :buscarConductor %%B
+  echo.
+  call :buscarVehiculo %%C
+  echo.
+  echo.
 )
 endlocal
 exit /b
-
 
 :buscarRelacionVehiculo
 setlocal
@@ -215,15 +208,15 @@ set "DNI_REL=%~1"
 set "RELACIONES_ENCONTRADAS=0"  :: Variable para rastrear si se encuentran relaciones
 
 for /f "usebackq skip=1 tokens=1,2 delims=;" %%F in ("%relaciones_file%") do (
-    if "%%F"=="%DNI_REL%" (
-        set "RELACIONES_ENCONTRADAS=1"  :: Marca que se encontró al menos una relación
-        call :buscarVehiculo %%G
-    )
+  if "%%F"=="%DNI_REL%" (
+    set "RELACIONES_ENCONTRADAS=1"  :: Marca que se encontró al menos una relación
+    call :buscarVehiculo %%G
+  )
 )
 
 if "%RELACIONES_ENCONTRADAS%"=="0" (
-    echo x ^[ERROR^] No se encontraron relaciones para el DNI: %DNI_REL%
-    echo.
+  echo x ^[ERROR^] No se encontraron relaciones para el DNI: %DNI_REL%
+  echo.
 )
 
 endlocal
@@ -234,20 +227,20 @@ setlocal
 set "VEHICULO_MATRICULA=%~1"
 set "VEHICULO_ENCONTRADO=0"  :: Variable para verificar si se encontró el vehículo
 
-for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%I in ("%vehiculo_file%") do (
-    if "%%I"=="%VEHICULO_MATRICULA%" (
-        set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
-        echo - %%K : %%J ^(%%I^) ^[%%L: %%M^]
-
-        if "%Listado%" neq "multas" (
-        call :multas %%A
-        )
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=; " %%I in ("%vehiculo_file%") do (
+  if "%%I"=="%VEHICULO_MATRICULA%" (
+    set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
+    echo - %%K : %%J ^(%%I^) ^[%%L: %%M^]
+    
+    if "%Listado%" neq "multas" (
+      call :multas %%A
     )
+  )
 )
 
 if "%VEHICULO_ENCONTRADO%"=="0" (
-    echo x ^[ERROR^] No se encontró información sobre el vehículo con matrícula: %VEHICULO_MATRICULA%
-    echo.
+  echo x ^[ERROR^] No se encontró información sobre el vehículo con matrícula: %VEHICULO_MATRICULA%
+  echo.
 )
 
 endlocal
@@ -258,16 +251,16 @@ setlocal
 set "MATRICULA_REL=%~1"
 set "RELACIONES_ENCONTRADAS=0"  :: Variable para rastrear si se encuentran relaciones
 
-for /f "usebackq skip=1 tokens=1,2 delims=;" %%F in ("%relaciones_file%") do (
-    if "%%G"=="%MATRICULA_REL%" (
-        set "RELACIONES_ENCONTRADAS=1"  :: Marca que se encontró al menos una relación
-        call :buscarConductor %%F
-    )
+for /f "usebackq skip=1 tokens=1,2 delims=;; " %%F in ("%relaciones_file%") do (
+  if "%%G"=="%MATRICULA_REL%" (
+    set "RELACIONES_ENCONTRADAS=1"  :: Marca que se encontró al menos una relación
+    call :buscarConductor %%F
+  )
 )
 
 if "%RELACIONES_ENCONTRADAS%"=="0" (
-    echo x ^[ERROR^] No se encontraron relaciones para el vehiculo: %MATRICULA_REL%
-    echo.
+  echo x ^[ERROR^] No se encontraron relaciones para el vehiculo: %MATRICULA_REL%
+  echo.
 )
 
 endlocal
@@ -279,35 +272,30 @@ set "DNI=%~1"
 set "DNI_ENCONTRADO=0"  :: Variable para verificar si se encontró el vehículo
 
 for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%I in ("%conductor_file%") do (
-    if "%%I"=="%DNI%" (
-        set "DNI_ENCONTRADO=1"  :: Marca que se encontró el vehículo
-        echo DNI: %%I ^| Fecha Carnet: %%L ^| Nombre: %%J %%K
-        if "%Listado%" neq "multas" (
-        call :multas %%I
-        )
+  if "%%I"=="%DNI%" (
+    set "DNI_ENCONTRADO=1"  :: Marca que se encontró el vehículo
+    echo DNI: %%I ^| Fecha Carnet: %%L ^| Nombre: %%J %%K
+    if "%Listado%" neq "multas" (
+      call :multas %%I
     )
+  )
 )
 
 if "%DNI_ENCONTRADO%"=="0" (
-    echo x ^[ERROR^] No se encontró información sobre el DNI: %DNI%
-    echo.
+  echo x ^[ERROR^] No se encontró información sobre el DNI: %DNI%
+  echo.
 )
 
 endlocal
 exit /b
 
-
-
-
-
-
 :multas
 setlocal
-set "DNI=%~1"                   
+set "DNI=%~1"
 for /f "usebackq skip=1 tokens=1,2,3,4,5,6,7 delims=;" %%F in ("%multas_file%") do (
-    if "%%G"=="%DNI%" (
-      echo  + Multa %%F: ^(%%J€^) **^[%%K^]** - %%L ^| "%%I"
-    )
+  if "%%G"=="%DNI%" (
+    echo  + Multa %%F: ^(%%J€^) **^[%%K^]** - %%L ^| "%%I"
+  )
 )
 
 endlocal
@@ -330,22 +318,22 @@ timeout /t 1 /nobreak >nul
 
 :: Lee el contenido actual de control.txt
 for /f "delims=" %%A in (%control_file%) do (
-    set "NEWcontrol=%%A"
+  set "NEWcontrol=%%A"
 )
 
 :: Si el contenido ha cambiado, realiza la acción
 if not "%PaseControl%" == "%NEWcontrol%" (
-    echo El archivo ha cambiado. Ejecutando acción...
-
-    :: Aquí va la acción que deseas realizar cuando el archivo cambie
-    echo Cambios detectados, procesando...
-
-    :: Actualiza el valor de PaseControl con el nuevo contenido
-    set "PaseControl=%NEWcontrol%"
-
-    timeout /t 1 /nobreak >nul
-
-    goto inicio
+  echo El archivo ha cambiado. Ejecutando acción...
+  
+  :: Aquí va la acción que deseas realizar cuando el archivo cambie
+  echo Cambios detectados, procesando...
+  
+  :: Actualiza el valor de PaseControl con el nuevo contenido
+  set "PaseControl=%NEWcontrol%"
+  
+  timeout /t 1 /nobreak >nul
+  
+  goto inicio
 )
 
 goto bucle
