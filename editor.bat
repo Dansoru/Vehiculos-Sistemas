@@ -199,8 +199,8 @@ for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do 
         echo.
         echo [%date% %time%] ============ Buscar conductor ===========
         echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
-        echo          -  DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C
-        echo          -  DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C >> "control.txt"
+        echo         + DNI: %%A ^| Nombre: %%B %%C ^| Fecha Carnet: %%D >> "control.txt"
+        echo         + DNI: %%A ^| Nombre: %%B %%C ^| Fecha Carnet: %%D
         echo.
     )   
 )
@@ -524,20 +524,54 @@ goto menu_relaciones
 
 :buscar_relacion
 cls
-set /p filtro=Introduce el DNI o la Matricula a buscar:
-findstr /i "%filtro%" "%relaciones_file%"
-echo.
-if errorlevel 1 (
-    echo [%date% %time%] =========== Buscar relacion =========== >> "control.txt"
-    echo       ! No se encontro ninguna relacion con: %filtro% >> "control.txt"
-    echo [%date% %time%] =========== Buscar relacion =========== 
-    echo       ! No se encontro ninguna relacion con: %filtro% 
-) else (
-    echo [%date% %time%] =========== Buscar relacion =========== >> "control.txt"
-    echo [%date% %time%] =========== Buscar relacion =========== 
-    echo       ? Encontrada relacion con filtro: %filtro% >> "control.txt"
-    echo       ? Encontrada relacion con filtro: %filtro% 
+set /p filtro=Introduce el DNI o la Matrícula a buscar:
+
+:: Inicializar variables
+set relacionEncontrada=0
+set conductorDatos=
+set vehiculoDatos=
+
+:: Buscar en el archivo de relaciones
+for /f "usebackq skip=1 tokens=1,2 delims=;" %%A in ("%relaciones_file%") do (
+    if "%%A"=="%filtro%" (
+        set relacionEncontrada=1
+        set conductorFiltro=%%A
+        set matriculaFiltro=%%B
+    ) else if "%%B"=="%filtro%" (
+        set relacionEncontrada=1
+        set conductorFiltro=%%A
+        set matriculaFiltro=%%B
+    )
 )
+
+:: Si se encontró la relación, buscar los datos del conductor y del vehículo
+if "%relacionEncontrada%"=="1" (
+    :: Buscar datos del conductor
+    for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do (
+        if "%%A"=="%conductorFiltro%" (
+            echo [%date% %time%] ============ Buscar relación ===========
+            echo [%date% %time%] ============ Buscar relación =========== >> "control.txt"
+            echo         + DNI: %%A ^| Nombre: %%B %%C ^| Fecha Carnet: %%D >> "control.txt"
+            echo         + DNI: %%A ^| Nombre: %%B %%C ^| Fecha Carnet: %%D
+        )
+    )
+
+    :: Buscar datos del vehículo
+    for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
+        if "%%A"=="%matriculaFiltro%" (
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B >> "control.txt"
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B
+        )
+    )
+
+) else (
+    :: No se encontró ninguna relación
+    echo [%date% %time%] ============ Buscar relación ===========
+    echo [%date% %time%] ============ Buscar relación =========== >> "control.txt"
+    echo x [ERROR] No se encontró ninguna relación con el filtro: %filtro%
+    echo x [ERROR] No se encontró ninguna relación con el filtro: %filtro% >> "control.txt"
+)
+
 pause
 goto menu_relaciones
 
