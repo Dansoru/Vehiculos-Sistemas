@@ -1,8 +1,0 @@
-[13/01/2025 14:00:38,13] === Acceder a la lista de conductores === 
-[13/01/2025 14:02:52,87] === Acceder a la lista de conductores === 
-[13/01/2025 14:02:53,75] === Acceder a la lista de conductores === 
-[13/01/2025 14:03:58,16] =========== Eliminar conductor ========== 
-[13/01/2025 14:03:58,16] ============ Añadir conductor =========== 
-      + Datos:  
-[13/01/2025 14:04:04,78] === Acceder a la lista de conductores === 
-[13/01/2025 14:04:18,71] === Acceder a la lista de conductores === 
