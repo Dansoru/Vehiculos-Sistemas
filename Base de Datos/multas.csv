@@ -1,0 +1,12 @@
+﻿ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha
+1;90123456J;4444DDD;Exceso de velocidad;200;Pendiente;01/12/2024
+2;87654321B;456DEF;Estacionamiento ilegal;150;Paid;02/12/2024
+3;23456789C;789GHI;Conducción temeraria;300;Pendiente;03/12/2024
+4;34567890D;101JKL;No usar cinturón de seguridad;100;Paid;04/12/2024
+5;45678901E;202MNO;Exceso de velocidad;250;Pendiente;05/12/2024
+6;56789012F;303PQR;Estacionamiento en zona prohibida;180;Pendiente;06/12/2024
+7;67890123G;404STU;Conducir sin licencia;500;Paid;07/12/2024
+8;78901234H;505VWX;Exceso de velocidad;220;Pendiente;08/12/2024
+9;89012345I;606YZA;Conducción bajo los efectos del alcohol;350;Pendiente;09/12/2024
+10;90123456J;707BCD;Estacionamiento en carga y descarga;120;Paid;10/12/2024
+11;90123456J;4444DDD;No usar cinturon de seguridad;300;Pendiente;12/01/2025 
