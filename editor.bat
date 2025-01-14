@@ -416,80 +416,49 @@ goto menu_vehiculos
 
 :listar_vehiculos_tipo
 cls
+set "VEHICULO_TIPO=0"
 
-
-cls
 set /p Tipo=Introduce el tipo de vehiculo a buscar:
-set "VEHICULO_ENCONTRADO=%~1"
-echo "%Tipo%"
+
+echo [%date% %time%] ============ Buscar vehiculo %Tipo% ============
+echo [%date% %time%] ====== Buscar vehiculo %Tipo% ======= >> "control.txt"
 
 for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
     if "%%C"=="%Tipo%" (
-        set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
-            echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
-            echo       - Encontrado vehiculo con matricula: %Tipo% >> "control.txt"
-            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^] >> "control.txt"
-            echo.
-            echo [%date% %time%] ============ Buscar vehiculo ============
-            echo       - Encontrado vehiculo con matricula: %Tipo%
-            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^]
+        set "VEHICULO_TIPO=1"  :: Marca que se encontró el vehículo
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B >> "control.txt"
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B
     )
 )
 
-if "%VEHICULO_ENCONTRADO%"=="0" (
-    echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
-    echo       ! No se encontro el vehiculo con matricula: %Tipo% >> "control.txt"
-    echo.
-    echo [%date% %time%] ============ Buscar vehiculo ============
-    echo       ! No se encontro el vehiculo con matricula: %Tipo%
+if "%VEHICULO_TIPO%"=="0" (
+    echo       x No se encontro el vehiculo tipo: %Tipo% >> "control.txt"
+    echo       x No se encontro el vehiculo tipo: %Tipo%
 )
-pause
-goto menu_vehiculos
-
-
-
-
-set /p tipo=Introduce el tipo de vehiculo a buscar:
-echo Vehiculos de tipo %tipo%:
-findstr /i "%tipo%" "%vehiculo_file%"
-echo [%date% %time%] ========== Listar vehiculos tipo ======== >> "control.txt"
-echo       > Listado de vehiculos de tipo: %tipo% >> "control.txt"
-findstr /i "%tipo%" "%vehiculo_file%" >> "control.txt"
-echo       > !consola! >> "control.txt"
-
-echo.
-echo [%date% %time%] ========== Listar vehiculos tipo ========
-echo       > Listado de vehiculos de tipo: %tipo%
 pause
 goto menu_vehiculos
 
 :listar_vehiculos_marca
 cls
-set /p marca=Introduce la marca de vehiculo a buscar:
-echo Vehiculos de la marca %marca%:
-findstr /i "%marca%" "%vehiculo_file%"
-echo [%date% %time%] ========== Listar vehiculos marca ======= >> "control.txt"
-echo       > Listado de vehiculos de la marca: %marca% >> "control.txt"
-echo.
-echo [%date% %time%] ========== Listar vehiculos marca =======
-echo       > Listado de vehiculos de la marca: %marca%
-pause
-goto menu_vehiculos
+set "VEHICULO_MARCA=0"
 
-:listar_vehiculos_sin_conductor
-cls
-echo Vehiculos sin conductor asignado:
-for /f "tokens=2 delims=;" %%A in ("%relaciones_file%") do @echo %%A > temp_matriculas.csv
-for /f "tokens=1 delims=;" %%B in ("%vehiculo_file%") do (
-  findstr /i /v "%%B" temp_matriculas.csv > nul
-  if errorlevel 1 echo %%B
+set /p marca=Introduce la marca del vehiculo a buscar:
+
+echo [%date% %time%] ============ Buscar marca %Tipo% ============
+echo [%date% %time%] ====== Buscar marca %Tipo% ======= >> "control.txt"
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
+    if "%%B"=="%marca%" (
+        set "VEHICULO_MARCA=1"  :: Marca que se encontró el vehículo
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B >> "control.txt"
+            echo         + %%C : ^(%%A^) ^[%%D: %%E^] %%B
+    )
 )
-del temp_matriculas.csv
-echo [%date% %time%] ========== Vehiculos sin conductor ====== >> "control.txt"
-echo       > Listado de vehiculos sin conductor asignado >> "control.txt"
-echo.
-echo [%date% %time%] ========== Vehiculos sin conductor ======
-echo       > Listado de vehiculos sin conductor asignado
+
+if "%VEHICULO_MARCA%"=="0" (
+    echo       x No se encontro el vehiculo de la marca: %marca% >> "control.txt"
+    echo       x No se encontro el vehiculo de la marca: %marca%
+)
 pause
 goto menu_vehiculos
 
