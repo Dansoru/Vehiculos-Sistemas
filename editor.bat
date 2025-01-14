@@ -195,18 +195,14 @@ set /p dni=Introduce el DNI del conductor a buscar:
 set "dniEncontrado=0"
 for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do (
     if "%%A"=="%dni%" (
-        set dniEncontrado=1 
+        set dniEncontrado=1
+        echo.
         echo [%date% %time%] ============ Buscar conductor ===========
         echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
-        echo DNI: %%A
-        echo DNI: %%A >> "control.txt"
-        echo Nombre: %%B
-        echo Nombre: %%B >> "control.txt"
-        echo Apellido: %%C
-        echo Apellido: %%C >> "control.txt"
-        echo Fecha carnet: %%D
-        echo Fecha carnet: %%D >> "control.txt"
-    )
+        echo          -  DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C
+        echo          -  DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C >> "control.txt"
+        echo.
+    )   
 )
 
 
@@ -215,6 +211,7 @@ if "%dniEncontrado%"=="0" (
     echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
     echo  No se encontró información sobre el DNI: %dni%
     echo  No se encontró información sobre el DNI: %dni% >> "control.txt"
+    echo.
 )
 pause
 goto menu_conductores
@@ -242,42 +239,62 @@ goto menu_conductores
 
 :listar_conductores_antiguedad
 cls
-:: Obtener la fecha actual en formato AAAA-MM-DD
-for /f "tokens=2 delims==" %%A in ('"wmic os get localdatetime /value"') do set datetime=%%A
-set year=%datetime:~0,4%
+
+:: Obtener la fecha actual en formato AAAA
+for /f "usebackq tokens=2 delims==" %%A in (`wmic os get localdatetime /value`) do set "datetime=%%A"
+set "year=%datetime:~0,4%"
+echo Año actual: %year%
 
 :: Solicitar número mínimo de años
-set /p min_years=Introduce el número mínimo de años de carnet:
+set /p "min_years=Introduce el número mínimo de años de carnet: "
 
 cls
 echo ==========================================
 echo  CONDUCTORES CON AL MENOS %min_years% AÑOS DE CARNET
 echo ==========================================
 
-:: Ruta del archivo CSV (modifica si está en otra ubicación)
-set csv_file=conductores.csv
+    echo [%date% %time%] === Buscar conductor con %min_years% años === >> "control.txt"
 
-:: Leer el archivo línea por línea
-for /f "skip=1 tokens=1,2,3,4 delims=;" %%A in ("%csv_file%") do (
-  set dni=%%A
-  set nombre=%%B
-  set apellido=%%C
-  set fecha_carnet=%%D
-  
-  :: Extraer el año de la fecha del carnet
-  set year_carnet=!fecha_carnet:~0,4!
-  
-  :: Calcular años de carnet
-  set /a years_carnet=%year% - !year_carnet!
-  
-  :: Comparar años de carnet con el mínimo requerido
-  if !years_carnet! GEQ %min_years% (
-    echo DNI: !dni! - Nombre: !nombre! !apellido! - Años de carnet: !years_carnet!
-  )
+
+:: Leer el archivo línea por línea y procesar cada campo
+for /f "usebackq skip=1 tokens=1-4 delims=;" %%A in ("%conductor_file%") do (
+    set "dni=%%A"
+    set "nombre=%%B"
+    set "apellido=%%C"
+    set "fecha_carnet=%%D"
+    
+    :: Eliminar espacios en blanco al inicio y final de la fecha
+    set "fecha_carnet=!fecha_carnet: =!"
+    
+    :: Validar que fecha_carnet no esté vacía
+    if not "!fecha_carnet!"=="" (
+        :: Extraer el año directamente (últimos 4 caracteres de la fecha)
+        set "year_carnet=!fecha_carnet:~-4!"
+    
+        :: Verificar si el año es numérico
+        set "is_numeric=true"
+        for /f "delims=0123456789" %%i in ("!year_carnet!") do set "is_numeric=false"
+        
+        if "!is_numeric!"=="true" (
+            :: Calcular años de carnet
+            set /a "years_carnet=%year% - !year_carnet!"
+                    
+
+            :: Comparar años de carnet con el mínimo requerido
+            if !years_carnet! GEQ %min_years% (
+                :: Imprimir en pantalla y guardar en archivo
+                echo          -  DNI: %%A ^| Fecha Carnet: %%D ^[!years_carnet!^] años ^| Nombre: %%B %%C
+                echo          -  DNI: %%A ^| Fecha Carnet: %%D ^[!years_carnet!^] años ^| Nombre: %%B %%C >> "control.txt"
+
+            )
+        ) else (
+            echo          x  [ERROR] Fecha inválida para el conductor: !dni! - !nombre! !apellido! (!fecha_carnet!)
+        )
+    )
 )
 
-echo [%date% %time%] ============ Listar antigüedad ========== >> "control.txt"
-echo       > Listado de conductores con más de %min_years% años de carnet >> "control.txt"
+echo ==========================================
+echo.
 pause
 goto menu_conductores
 

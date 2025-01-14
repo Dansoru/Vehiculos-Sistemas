@@ -98,8 +98,6 @@ if "!lastline!"=="SALIR " (
 :: Eliminar fecha y hora de la línea si están presentes
 for /f "tokens=1,2 delims=]" %%A in ("!lastline!") do set "lastline=%%B"
 
-echo !lastline!
-
 if "!lastline!"==" ==== Acceder a la lista de vehiculos ==== " (
     set "Listado=vehiculos"
 )
