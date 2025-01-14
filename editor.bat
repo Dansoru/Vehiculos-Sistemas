@@ -92,8 +92,7 @@ echo. > control.txt
 )
 if "%opcion%"=="7" (
 
-echo SALIR > control.txt
-echo. > control.txt
+echo SALIR >> control.txt
 exit
 )
 
@@ -349,21 +348,28 @@ goto menu_vehiculos
 
 :buscar_vehiculo
 cls
-set /p matricula=Introduce la matricula del vehiculo a buscar:
-findstr /i "%matricula%;" "%vehiculo_file%"
-ehco.
-if errorlevel 1 (
+set /p VEHICULO_MATRICULA=Introduce la matricula del vehiculo a buscar:
+set "VEHICULO_ENCONTRADO=0"
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
+    if "%%A"=="%VEHICULO_MATRICULA%" (
+        set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
+            echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
+            echo       - Encontrado vehiculo con matricula: %VEHICULO_MATRICULA% >> "control.txt"
+            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^] >> "control.txt"
+            echo.
+            echo [%date% %time%] ============ Buscar vehiculo ============
+            echo       - Encontrado vehiculo con matricula: %VEHICULO_MATRICULA%
+            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^]
+    )
+)
+
+if "%VEHICULO_ENCONTRADO%"=="0" (
     echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
-    echo       ! No se encontro el vehiculo con matricula: %matricula% >> "control.txt"
+    echo      x No se encontro el vehiculo con matricula: %VEHICULO_MATRICULA% >> "control.txt"
     echo.
     echo [%date% %time%] ============ Buscar vehiculo ============
-    echo       ! No se encontro el vehiculo con matricula: %matricula%
-) else (
-    echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
-    echo       ? Encontrado vehiculo con matricula: %matricula% >> "control.txt"
-    echo.
-    echo [%date% %time%] ============ Buscar vehiculo ============
-    echo       ? Encontrado vehiculo con matricula: %matricula%
+    echo      x No se encontro el vehiculo con matricula: %VEHICULO_MATRICULA%
 )
 pause
 goto menu_vehiculos
@@ -372,6 +378,11 @@ goto menu_vehiculos
 cls
 set /p matricula=Introduce la matricula del vehiculo a actualizar:
 findstr /v /i "%matricula%;" "%vehiculo_file%" > temp.csv
+echo.
+echo Datos actuales:
+echo ----------------------------------------------
+findstr /i "%matricula%;" "%vehiculo_file%"
+echo ----------------------------------------------
 set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula;Marca;Tipo;Atributo;Valor):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%vehiculo_file%"
@@ -388,11 +399,47 @@ goto menu_vehiculos
 
 :listar_vehiculos_tipo
 cls
+
+
+cls
+set /p Tipo=Introduce el tipo de vehiculo a buscar:
+set "VEHICULO_ENCONTRADO=%~1"
+echo "%Tipo%"
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
+    if "%%C"=="%Tipo%" (
+        set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
+            echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
+            echo       - Encontrado vehiculo con matricula: %Tipo% >> "control.txt"
+            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^] >> "control.txt"
+            echo.
+            echo [%date% %time%] ============ Buscar vehiculo ============
+            echo       - Encontrado vehiculo con matricula: %Tipo%
+            echo         + %%C : %%B ^(%%A^) ^[%%D: %%E^]
+    )
+)
+
+if "%VEHICULO_ENCONTRADO%"=="0" (
+    echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
+    echo       ! No se encontro el vehiculo con matricula: %Tipo% >> "control.txt"
+    echo.
+    echo [%date% %time%] ============ Buscar vehiculo ============
+    echo       ! No se encontro el vehiculo con matricula: %Tipo%
+)
+pause
+goto menu_vehiculos
+
+
+
+
 set /p tipo=Introduce el tipo de vehiculo a buscar:
 echo Vehiculos de tipo %tipo%:
 findstr /i "%tipo%" "%vehiculo_file%"
 echo [%date% %time%] ========== Listar vehiculos tipo ======== >> "control.txt"
 echo       > Listado de vehiculos de tipo: %tipo% >> "control.txt"
+findstr /i "%tipo%" "%vehiculo_file%" >> "control.txt"
+echo       > !consola! >> "control.txt"
+
 echo.
 echo [%date% %time%] ========== Listar vehiculos tipo ========
 echo       > Listado de vehiculos de tipo: %tipo%
