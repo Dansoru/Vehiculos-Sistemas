@@ -25,16 +25,16 @@ set "multas_file=%base_dir%\multas.csv"
 
 :: Crear los archivos si no existen
 if not exist "%conductor_file%" (
-    echo DNI,Nombre,Apellido,Fecha_Carnet > "%conductor_file%"
+    echo DNI;Nombre;Apellido;Fecha_Carnet > "%conductor_file%"
 )
 if not exist "%vehiculo_file%" (
-    echo Matricula,Marca,Tipo,Atributo,Valor > "%vehiculo_file%"
+    echo Matricula;Marca;Tipo;Atributo;Valor > "%vehiculo_file%"
 )
 if not exist "%relaciones_file%" (
     echo DNI -> Matricula > "%relaciones_file%"
 )
 if not exist "%multas_file%" (
-    echo ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha > "%multas_file%"
+    echo ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha > "%multas_file%"
 )
 
 echo.
@@ -127,7 +127,7 @@ goto menu_conductores
 :: Funciones de conductores
 :anadir_conductor
 cls
-echo Introduzca los datos del conductor en el formato: DNI,Nombre,Apellido,Fecha_Carnet
+echo Introduzca los datos del conductor en el formato: DNI;Nombre;Apellido;Fecha_Carnet
 set /p conductor_datos=Datos:
 echo %conductor_datos% >> "%conductor_file%"
 echo [%date% %time%] =========== Eliminar conductor ========== >> "control.txt"
@@ -165,7 +165,7 @@ if "%seleccion%"=="" (
 :: Filtrar las líneas que no coinciden con la seleccionada
 set /a current_line=1
 (
-echo DNI,Nombre,Apellido,Fecha_Carnet
+echo DNI;Nombre;Apellido;Fecha_Carnet
 for /f "skip=1 tokens=*" %%A in ('type "%conductor_file%"') do (
   if "!current_line!" NEQ "%seleccion%" echo %%A
   set /a current_line+=1
@@ -209,8 +209,13 @@ goto menu_conductores
 :actualizar_conductor
 cls
 set /p dni=Introduce el DNI del conductor a actualizar:
-findstr /v /i "%dni%," "%conductor_file%" > temp.csv
-set /p nuevo_datos=Introduce los nuevos datos del conductor (DNI,Nombre,Apellido,Fecha_Carnet):
+findstr /v /i "%dni%;" "%conductor_file%" > temp.csv
+echo.
+echo Datos actuales:
+echo ----------------------------------------------
+findstr /i "%dni%;" "%conductor_file%"
+echo ----------------------------------------------
+set /p nuevo_datos=Introduce los nuevos datos del conductor (DNI;Nombre;Apellido;Fecha_Carnet):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%conductor_file%"
 echo [%date% %time%] ========== Actualizar conductor ========= >> "control.txt"
@@ -240,7 +245,7 @@ echo ==========================================
 set csv_file=conductores.csv
 
 :: Leer el archivo línea por línea
-for /f "skip=1 tokens=1,2,3,4 delims=," %%A in ("%csv_file%") do (
+for /f "skip=1 tokens=1,2,3,4 delims=;" %%A in ("%csv_file%") do (
   set dni=%%A
   set nombre=%%B
   set apellido=%%C
@@ -293,7 +298,7 @@ if "%opcion%"=="9" goto menu_principal
 
 :anadir_vehiculo
 cls
-echo Introduzca los datos del vehiculo en el formato: Matricula,Marca,Tipo,Atributo,Valor
+echo Introduzca los datos del vehiculo en el formato: Matricula;Marca;Tipo;Atributo;Valor
 set /p vehiculo_datos=Datos:
 echo %vehiculo_datos% >> "%vehiculo_file%"
 echo [%date% %time%] ============ Anadir vehiculo ============ >> "control.txt"
@@ -307,7 +312,7 @@ goto menu_vehiculos
 :eliminar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a eliminar:
-findstr /v /i "%matricula%," "%vehiculo_file%" > temp.csv
+findstr /v /i "%matricula%;" "%vehiculo_file%" > temp.csv
 move /y temp.csv "%vehiculo_file%"
 echo [%date% %time%] ============ Eliminar vehiculo ========== >> "control.txt"
 echo       - Eliminado vehiculo con matricula: %matricula% >> "control.txt"
@@ -331,7 +336,7 @@ goto menu_vehiculos
 :buscar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a buscar:
-findstr /i "%matricula%," "%vehiculo_file%"
+findstr /i "%matricula%;" "%vehiculo_file%"
 ehco.
 if errorlevel 1 (
     echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
@@ -352,8 +357,8 @@ goto menu_vehiculos
 :actualizar_vehiculo
 cls
 set /p matricula=Introduce la matricula del vehiculo a actualizar:
-findstr /v /i "%matricula%," "%vehiculo_file%" > temp.csv
-set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula,Marca,Tipo,Atributo,Valor):
+findstr /v /i "%matricula%;" "%vehiculo_file%" > temp.csv
+set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula;Marca;Tipo;Atributo;Valor):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%vehiculo_file%"
 echo [%date% %time%] ========== Actualizar vehiculo ========== >> "control.txt"
@@ -396,8 +401,8 @@ goto menu_vehiculos
 :listar_vehiculos_sin_conductor
 cls
 echo Vehiculos sin conductor asignado:
-for /f "tokens=2 delims=," %%A in ("%relaciones_file%") do @echo %%A > temp_matriculas.csv
-for /f "tokens=1 delims=," %%B in ("%vehiculo_file%") do (
+for /f "tokens=2 delims=;" %%A in ("%relaciones_file%") do @echo %%A > temp_matriculas.csv
+for /f "tokens=1 delims=;" %%B in ("%vehiculo_file%") do (
   findstr /i /v "%%B" temp_matriculas.csv > nul
   if errorlevel 1 echo %%B
 )
@@ -434,7 +439,7 @@ goto menu_relaciones
 
 :asignar_relacion
 cls
-echo Introduzca los datos de la relacion en el formato: DNI,Matricula
+echo Introduzca los datos de la relacion en el formato: DNI;Matricula
 set /p relacion_datos=Datos:
 echo %relacion_datos% >> "%relaciones_file%"
 echo [%date% %time%] =========== Asignar relacion ========== >> "control.txt"
@@ -509,7 +514,7 @@ goto menu_consultas
 :listar_conductores_con_vehiculos
 cls
 echo Lista de conductores con mas de un vehiculo:
-(for /f "tokens=1 delims=," %%A in ("%relaciones_file%") do (
+(for /f "tokens=1 delims=;" %%A in ("%relaciones_file%") do (
   findstr /c:"%%A" "%relaciones_file%" > nul
   if !errorlevel! gtr 1 echo %%A
 )) | sort | uniq
@@ -526,7 +531,7 @@ cls
 set /p dni=Introduce el DNI del conductor:
 echo Vehiculos asignados al conductor %dni%:
 findstr /i "%dni%" "%relaciones_file%" > temp.csv
-for /f "tokens=2 delims=," %%B in (temp.csv) do (
+for /f "tokens=2 delims=;" %%B in (temp.csv) do (
   findstr /i "%%B" "%vehiculo_file%"
 )
 del temp.csv
@@ -566,7 +571,7 @@ goto menu_multas
 
 :anadir_multa
 cls
-echo Introduzca los datos de la multa en el formato: ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha
+echo Introduzca los datos de la multa en el formato: ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha
 set /p multa_datos=Datos:
 echo %multa_datos% >> "%multas_file%"
 echo.
@@ -585,7 +590,7 @@ goto menu_multas
 :eliminar_multa
 cls
 set /p id=Introduce el ID de la multa a eliminar:
-findstr /v /i "%id%," "%multas_file%" > temp.csv
+findstr /v /i "%id%;" "%multas_file%" > temp.csv
 move /y temp.csv "%multas_file%"
 (
     echo [%date% %time%] ============ Eliminar multa ============
@@ -617,7 +622,7 @@ goto menu_multas
 :buscar_multa
 cls
 set /p id=Introduce el ID de la multa a buscar:
-findstr /i "%id%," "%multas_file%"
+findstr /i "%id%;" "%multas_file%"
 if errorlevel 1 (
     (
         echo [%date% %time%] ============ Buscar multa ============
@@ -643,8 +648,8 @@ goto menu_multas
 :actualizar_multa
 cls
 set /p id=Introduce el ID de la multa a actualizar:
-findstr /v /i "%id%," "%multas_file%" > temp.csv
-set /p nuevo_datos=Introduce los nuevos datos de la multa (ID,DNI,Matrícula,Descripción,Monto,Estado,Fecha):
+findstr /v /i "%id%;" "%multas_file%" > temp.csv
+set /p nuevo_datos=Introduce los nuevos datos de la multa (ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%multas_file%"
 (

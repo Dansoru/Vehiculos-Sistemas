@@ -90,32 +90,27 @@ echo ---------------------------------------------------
 set "lastline="
 for /f "tokens=* delims=" %%A in (control.txt) do set "lastline=%%A"
 
-echo "!lastline!"
 
 :: Eliminar fecha y hora de la línea si están presentes
 for /f "tokens=1,2 delims=]" %%A in ("!lastline!") do set "lastline=%%B"
 
-echo "!lastline!"
 
-:: Comprobar si la última línea contiene el texto esperado
-if "!lastline!"==" === Acceder a la lista de conductores === " (
-    set "Listado=conductores"
-)
 if "!lastline!"==" ==== Acceder a la lista de vehiculos ==== " (
     set "Listado=vehiculos"
 )
+if "!lastline!"==" === Acceder a la lista de conductores === " (
+    set "Listado=conductores"
+)
 if "!lastline!"==" ==== Acceder a la lista de multas ==== " (
     set "Listado=multas"
+    
 )
-
-echo !Listado!
 
 if "!Listado!"=="conductores" (
     call :conductores
 ) else (
     if "!Listado!"=="vehiculos" (
         call :vehiculos
-        echo Se llama a los vehículos
     ) else (
         if "!Listado!"=="multas" (
             call :multas
@@ -141,6 +136,7 @@ set /a line_number=1
 :: Leer el archivo de conductores y mostrar la información
 echo CONDUCTORES:
 echo ===================================================
+echo.
 
 for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do (
   
@@ -167,16 +163,16 @@ setlocal
 :: Leer el archivo de vehiculos y mostrar la información
 echo VEHICULOS:
 echo ===================================================
+echo.
 
 for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do (
-        echo %%C : %%A ^(%%B^) ^[%%D: %%E^]
-        echo ID: !formatted_id! ^| DNI: %%A ^| Fecha Carnet: %%D ^| Nombre: %%B %%C
-    )
-)
+        echo %%C ^| Matricula: %%A ^(%%B^) ^[%%D: %%E^]
+    
+
   
   echo --------------------------------------------------------------------------------
     :: Llamar a las funciones para buscar vehículos y multas
-    call :buscarRelacionConductor
+    call :buscarRelacionConductor %%A
     echo.
     echo.
 
@@ -184,7 +180,29 @@ for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%vehiculo_file%") do
 endlocal
 exit /b
 
+:multas
+setlocal
 
+:: Leer el archivo de vehiculos y mostrar la información
+echo MULTAS:
+echo ===================================================
+echo.
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%multas_file%") do (
+    echo Multa %%A: ^(%%E€^) **^[%%F^]** - %%G ^| "%%D"
+    
+
+  
+  echo --------------------------------------------------------------------------------
+    :: Llamar a las funciones para buscar vehículos y multas
+    call :buscarConductor %%B
+    echo.
+    call :buscarVehiculo %%C
+    echo.
+    echo.
+)
+endlocal
+exit /b
 
 
 :buscarRelacionVehiculo
@@ -216,7 +234,10 @@ for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%I in ("%vehiculo_file%") do
     if "%%I"=="%VEHICULO_MATRICULA%" (
         set "VEHICULO_ENCONTRADO=1"  :: Marca que se encontró el vehículo
         echo - %%K : %%J ^(%%I^) ^[%%L: %%M^]
+
+        if "%Listado%" neq "multas" (
         call :multas %%A
+        )
     )
 )
 
@@ -227,6 +248,54 @@ if "%VEHICULO_ENCONTRADO%"=="0" (
 
 endlocal
 exit /b
+
+:buscarRelacionConductor
+setlocal
+set "MATRICULA_REL=%~1"
+set "RELACIONES_ENCONTRADAS=0"  :: Variable para rastrear si se encuentran relaciones
+
+for /f "usebackq skip=1 tokens=1,2 delims=;" %%F in ("%relaciones_file%") do (
+    if "%%G"=="%MATRICULA_REL%" (
+        set "RELACIONES_ENCONTRADAS=1"  :: Marca que se encontró al menos una relación
+        call :buscarConductor %%F
+    )
+)
+
+if "%RELACIONES_ENCONTRADAS%"=="0" (
+    echo x ^[ERROR^] No se encontraron relaciones para el vehiculo: %MATRICULA_REL%
+    echo.
+)
+
+endlocal
+exit /b
+
+:buscarConductor
+setlocal
+set "DNI=%~1"
+set "DNI_ENCONTRADO=0"  :: Variable para verificar si se encontró el vehículo
+
+for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%I in ("%conductor_file%") do (
+    if "%%I"=="%DNI%" (
+        set "DNI_ENCONTRADO=1"  :: Marca que se encontró el vehículo
+        echo DNI: %%I ^| Fecha Carnet: %%L ^| Nombre: %%J %%K
+        if "%Listado%" neq "multas" (
+        call :multas %%I
+        )
+    )
+)
+
+if "%DNI_ENCONTRADO%"=="0" (
+    echo x ^[ERROR^] No se encontró información sobre el DNI: %DNI%
+    echo.
+)
+
+endlocal
+exit /b
+
+
+
+
+
 
 :multas
 setlocal
