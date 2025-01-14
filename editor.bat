@@ -193,15 +193,29 @@ goto menu_conductores
 :buscar_conductor
 cls
 set /p dni=Introduce el DNI del conductor a buscar:
-findstr /i "%dni%;" "%conductor_file%"
-if errorlevel 1 (
+set "dniEncontrado=0"
+for /f "usebackq skip=1 tokens=1,2,3,4 delims=;" %%A in ("%conductor_file%") do (
+    if "%%A"=="%dni%" (
+        set dniEncontrado=1 
+        echo [%date% %time%] ============ Buscar conductor ===========
+        echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
+        echo DNI: %%A
+        echo DNI: %%A >> "control.txt"
+        echo Nombre: %%B
+        echo Nombre: %%B >> "control.txt"
+        echo Apellido: %%C
+        echo Apellido: %%C >> "control.txt"
+        echo Fecha carnet: %%D
+        echo Fecha carnet: %%D >> "control.txt"
+    )
+)
+
+
+if "%dniEncontrado%"=="0" (
+    echo [%date% %time%] ============ Buscar conductor ===========
     echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
-    echo       ! No se encontró el conductor con DNI: %dni% >> "control.txt"
-    echo       ! No se encontró el conductor con DNI: %dni%
-) else (
-    echo [%date% %time%] ============ Buscar conductor =========== >> "control.txt"
-    echo       ? Encontrado conductor con DNI: %dni% >> "control.txt"
-    echo       ? Encontrado conductor con DNI: %dni%
+    echo  No se encontró información sobre el DNI: %dni%
+    echo  No se encontró información sobre el DNI: %dni% >> "control.txt"
 )
 pause
 goto menu_conductores
