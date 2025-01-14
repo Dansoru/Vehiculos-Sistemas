@@ -691,38 +691,34 @@ echo Lista de multas:
 type "%multas_file%"
 (
     echo [%date% %time%] ==== Acceder a la lista de multas ==== 
-    echo       > Consultada lista de multas
     echo.
 ) >> "control.txt"
 echo [%date% %time%] ==== Acceder a la lista de multas ==== 
-echo       > Consultada lista de multas
 echo.
 pause
 goto menu_multas
 
 :buscar_multa
 cls
+set "MULTA_ID=0"
+
 set /p id=Introduce el ID de la multa a buscar:
-findstr /i "%id%;" "%multas_file%"
-if errorlevel 1 (
-    (
-        echo [%date% %time%] ============ Buscar multa ============
-        echo       ! Multa no encontrada con ID: %id%
-        echo.
-    ) >> "control.txt"
-    echo [%date% %time%] ============ Buscar multa ============
-    echo       ! Multa no encontrada con ID: %id%
-    echo.
-) else (
-    (
-        echo [%date% %time%] ============ Buscar multa ============
-        echo       ? Multa encontrada con ID: %id%
-        echo.
-    ) >> "control.txt"
-    echo [%date% %time%] ============ Buscar multa ============
-    echo       ? Multa encontrada con ID: %id%
-    echo.
+
+echo [%date% %time%] ============ Buscar multa %id% ============
+echo [%date% %time%] ===== Buscar multa ID %id% ===== >> "control.txt"
+
+for /f "usebackq skip=1 tokens=1,2,3,4,5,6,7 delims=;" %%A in ("%multas_file%") do (
+
+    if "%%A"=="%id%" (
+        set "MULTA_ID=1"
+            echo         + Multa %%A : ^(%%E€^) **^[%%F^]** - %%G ^| "%%D"
+    )
 )
+
+    if "%MULTA_ID%"=="0" (
+        echo       x No se encontro la multa con el ID: %id% >> "control.txt"
+        echo       x No se encontro la multa con el ID: %id%
+    )
 pause
 goto menu_multas
 
@@ -730,6 +726,11 @@ goto menu_multas
 cls
 set /p id=Introduce el ID de la multa a actualizar:
 findstr /v /i "%id%;" "%multas_file%" > temp.csv
+echo.
+echo Datos actuales:
+echo ----------------------------------------------
+findstr /i "%id%;" "%multas_file%"
+echo ----------------------------------------------
 set /p nuevo_datos=Introduce los nuevos datos de la multa (ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%multas_file%"
