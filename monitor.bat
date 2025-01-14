@@ -90,10 +90,15 @@ echo ---------------------------------------------------
 set "lastline="
 for /f "tokens=* delims=" %%A in (control.txt) do set "lastline=%%A"
 
-
+if "!lastline!"=="SALIR " (
+    echo DEBERIA SALIR
+    echo. > control.txt
+    exit
+)
 :: Eliminar fecha y hora de la línea si están presentes
 for /f "tokens=1,2 delims=]" %%A in ("!lastline!") do set "lastline=%%B"
 
+echo !lastline!
 
 if "!lastline!"==" ==== Acceder a la lista de vehiculos ==== " (
     set "Listado=vehiculos"
@@ -105,6 +110,7 @@ if "!lastline!"==" ==== Acceder a la lista de multas ==== " (
     set "Listado=multas"
     
 )
+
 
 if "!Listado!"=="conductores" (
     call :conductores

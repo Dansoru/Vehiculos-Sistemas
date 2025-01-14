@@ -92,8 +92,7 @@ echo. > control.txt
 )
 if "%opcion%"=="7" (
 
-echo SALIR > control.txt
-echo. > control.txt
+echo SALIR >> control.txt
 exit
 )
 
@@ -337,7 +336,7 @@ goto menu_vehiculos
 cls
 set /p matricula=Introduce la matricula del vehiculo a buscar:
 findstr /i "%matricula%;" "%vehiculo_file%"
-ehco.
+echo.
 if errorlevel 1 (
     echo [%date% %time%] ============ Buscar vehiculo ============ >> "control.txt"
     echo       ! No se encontro el vehiculo con matricula: %matricula% >> "control.txt"
@@ -358,6 +357,11 @@ goto menu_vehiculos
 cls
 set /p matricula=Introduce la matricula del vehiculo a actualizar:
 findstr /v /i "%matricula%;" "%vehiculo_file%" > temp.csv
+echo.
+echo Datos actuales:
+echo ----------------------------------------------
+findstr /i "%matricula%;" "%vehiculo_file%"
+echo ----------------------------------------------
 set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula;Marca;Tipo;Atributo;Valor):
 echo %nuevo_datos% >> temp.csv
 move /y temp.csv "%vehiculo_file%"
@@ -379,6 +383,9 @@ echo Vehiculos de tipo %tipo%:
 findstr /i "%tipo%" "%vehiculo_file%"
 echo [%date% %time%] ========== Listar vehiculos tipo ======== >> "control.txt"
 echo       > Listado de vehiculos de tipo: %tipo% >> "control.txt"
+findstr /i "%tipo%" "%vehiculo_file%" >> "control.txt"
+echo       > !consola! >> "control.txt"
+
 echo.
 echo [%date% %time%] ========== Listar vehiculos tipo ========
 echo       > Listado de vehiculos de tipo: %tipo%
