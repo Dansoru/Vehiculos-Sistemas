@@ -192,7 +192,7 @@ echo MULTAS:
 echo ===================================================
 echo.
 
-for /f "usebackq skip=1 tokens=1,2,3,4,5 delims=;" %%A in ("%multas_file%") do (
+for /f "usebackq skip=1 tokens=1,2,3,4,5,6,7 delims=;" %%A in ("%multas_file%") do (
     echo Multa %%A: ^(%%E€^) **^[%%F^]** - %%G ^| "%%D"
     
 
