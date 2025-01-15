@@ -1,8 +1,8 @@
 # Proyecto de Gestión de Conductores, Vehículos y Multas
 
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Dansoru/Vehiculos-Sistemas/total?style=plastic)
-![Static Badge](https://img.shields.io/badge/Idioma-%F0%9F%87%AA%F0%9F%87%B8-%23f44336?style=plastic&link=https%3A%2F%2Fgithub.com%2FDansoru%2FVehiculos-Sistemas%2Freleases?)
-![GitHub Release](https://img.shields.io/github/v/release/dansoru/Vehiculos-Sistemas?style=plastic)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Dansoru/Vehiculos-Sistemas/total?style=plastic)](https://github.com/Dansoru/Vehiculos-Sistemas/releases)
+[![Static Badge](https://img.shields.io/badge/Idioma-%F0%9F%87%AA%F0%9F%87%B8-%23f44336?style=plastic&link=https%3A%2F%2Fgithub.com%2FDansoru%2FVehiculos-Sistemas%2Freleases?)](https://github.com/Dansoru/Vehiculos-Sistemas/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/dansoru/Vehiculos-Sistemas?style=plastic)](https://github.com/Dansoru/Vehiculos-Sistemas/releases)
 [![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FDansoru%2FVehiculos-Sistemas&label=Visitas&labelColor=%235e5e5e&countColor=%2375e6f7&style=plastic)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2FDansoru%2FVehiculos-Sistemas)
 
 Este proyecto es un **ejercicio práctico de clase de Sistemas** desarrollado en Batch, cuyo objetivo es gestionar la información de conductores, vehículos, relaciones entre ellos y las multas que puedan recibir. El proyecto simula una gestión automatizada de los datos mediante scripts de procesamiento de archivos y comandos en el sistema operativo Windows.
