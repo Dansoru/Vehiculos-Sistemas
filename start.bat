@@ -30,7 +30,7 @@ echo                RRRRRRRR    RRRRRRR     OOOOOOOO     MMMMMMM               M
 echo.
 echo.
 echo                                         © 2025 Rafael Moreno y Alex Rotaru                                                                                                                                  
-echo.
+echo                                                                                                             v1.0                                   
 pause
 echo.
 echo.

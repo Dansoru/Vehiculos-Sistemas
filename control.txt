@@ -1,4 +1,1 @@
  
-[15/01/2025  8:53:36,80] ========== Actualizar conductor ========= 
-      ~ Actualizado conductor con DNI: 78901234H 
-      + Nuevos datos: 78901234H;Juan;Lopez;03/03/2001 

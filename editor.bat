@@ -17,6 +17,8 @@ if not exist control.txt (
   echo. > control.txt
 )
 
+echo. > control.txt
+
 :: Definir las rutas completas de los archivos
 set "conductor_file=%base_dir%\conductores.csv"
 set "vehiculo_file=%base_dir%\vehiculos.csv"
