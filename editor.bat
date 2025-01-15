@@ -617,6 +617,8 @@ if "%relacionEncontrada%"=="1" (
 )
 
 pause
+goto menu_relaciones
+
 
 
 :menu_multas
