@@ -246,6 +246,7 @@ if "%nuevo_datos%"=="" (
    echo       + Nuevos datos: %nuevo_datos% >> "control.txt"
    echo       + Nuevos datos: %nuevo_datos%
    echo Conductor actualizado correctamente.
+   )
  )
 )
 
@@ -429,7 +430,7 @@ echo Datos actuales:
 echo ----------------------------------------------
 findstr /i "%matricula%;" "%vehiculo_file%"
 echo ----------------------------------------------
-set /p nuevo_datos=Introduce los nuevos datos del vehiculo (Matricula;Marca;Tipo;Atributo;Valor):
+set /p nuevo_datos=Introduce los nuevos datos del vehiculo ^(Matricula;Marca;Tipo;Atributo;Valor^):
 if "%nuevo_datos%"=="" (
     echo Se canceló la acción.
 ) else (
@@ -743,7 +744,7 @@ if "%id%"=="" (
   echo ----------------------------------------------
   findstr /i "%id%;" "%multas_file%"
   echo ----------------------------------------------
-  set /p nuevo_datos=Introduce los nuevos datos de la multa (ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha):
+  set /p nuevo_datos=Introduce los nuevos datos de la multa ^(ID;DNI;Matrícula;Descripción;Monto;Estado;Fecha^):
   if "%nuevo_datos%"=="" (
     echo Se canceló la acción.
 ) else (
