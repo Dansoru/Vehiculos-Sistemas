@@ -74,9 +74,8 @@ echo 1. Gestion de Conductores
 echo 2. Gestion de Vehiculos
 echo 3. Gestion de Relaciones (Conductor-Vehiculo)
 echo 4. Multas
-echo 5. Consultas Especiales
-echo 6. Reiniciar registro
-echo 7. Salir
+echo 5. Reiniciar registro
+echo 6. Salir
 echo -------------------------------------------
 set /p opcion=Selecciona una opcion:
 
