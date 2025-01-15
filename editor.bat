@@ -86,6 +86,7 @@ if "%opcion%"=="4" goto menu_multas
 if "%opcion%"=="5" (
   
   echo. > control.txt
+  goto menu_principal
   
 )
 if "%opcion%"=="6" (
@@ -131,7 +132,6 @@ if "%conductor_datos%"=="" (
   echo Se canceló la acción.
   ) else (
   echo %conductor_datos% >> "%conductor_file%"
-  echo [%date% %time%] =========== Eliminar conductor ========== >> "control.txt"
   echo [%date% %time%] ============ Añadir conductor =========== >> "control.txt"
   echo       + Datos: %conductor_datos% >> "control.txt"
   echo Conductor añadido correctamente.
@@ -231,7 +231,7 @@ echo Datos actuales:
 echo ----------------------------------------------
 findstr /i "%dni%;" "%conductor_file%"
 echo ----------------------------------------------
-set /p nuevo_datos=Introduce los nuevos datos del conductor (DNI;Nombre;Apellido;Fecha_Carnet):
+set /p nuevo_datos=Introduce los nuevos datos del conductor ^(DNI;Nombre;Apellido;Fecha_Carnet^):
 
 if "%nuevo_datos%"=="" (
    echo Se canceló la acción.
