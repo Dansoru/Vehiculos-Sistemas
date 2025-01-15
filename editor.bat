@@ -84,13 +84,12 @@ if "%opcion%"=="1" goto menu_conductores
 if "%opcion%"=="2" goto menu_vehiculos
 if "%opcion%"=="3" goto menu_relaciones
 if "%opcion%"=="4" goto menu_multas
-if "%opcion%"=="5" goto menu_consultas
-if "%opcion%"=="6" (
+if "%opcion%"=="5" (
   
   echo. > control.txt
   
 )
-if "%opcion%"=="7" (
+if "%opcion%"=="6" (
   
   echo SALIR >> control.txt
   exit
@@ -618,56 +617,7 @@ if "%relacionEncontrada%"=="1" (
 )
 
 pause
-goto menu_relaciones
 
-:menu_consultas
-cls
-echo -------------------------------------------
-echo Consultas Especiales
-echo -------------------------------------------
-echo 1. Listar conductores con mas de un vehiculo
-echo 2. Listar vehiculos asignados a un conductor
-echo 3. Regresar al menu principal
-echo -------------------------------------------
-set /p opcion=Selecciona una opcion:
-
-if "%opcion%"=="1" goto listar_conductores_con_vehiculos
-if "%opcion%"=="2" goto listar_vehiculos_por_conductor
-if "%opcion%"=="3" goto menu_principal
-
-goto menu_consultas
-
-:listar_conductores_con_vehiculos
-cls
-echo Lista de conductores con mas de un vehiculo:
-(for /f "tokens=1 delims=;" %%A in ("%relaciones_file%") do (
-findstr /c:"%%A" "%relaciones_file%" > nul
-if !errorlevel! gtr 1 echo %%A
-)) | sort | uniq
-echo [%date% %time%] ====== Listar conductores con varios vehiculos ====== >> "control.txt"
-echo       > Consultada lista de conductores con mas de un vehiculo. >> "control.txt"
-echo.
-echo [%date% %time%] ====== Listar conductores con varios vehiculos ======
-echo       > Consultada lista de conductores con mas de un vehiculo.
-pause
-goto menu_consultas
-
-:listar_vehiculos_por_conductor
-cls
-set /p dni=Introduce el DNI del conductor:
-echo Vehiculos asignados al conductor %dni%:
-findstr /i "%dni%" "%relaciones_file%" > temp.csv
-for /f "tokens=2 delims=;" %%B in (temp.csv) do (
-  findstr /i "%%B" "%vehiculo_file%"
-)
-del temp.csv
-echo [%date% %time%] ====== Listar vehiculos por conductor ====== >> "control.txt"
-echo       > Vehiculos asignados al conductor con DNI: %dni% >> "control.txt"
-echo.
-echo [%date% %time%] ====== Listar vehiculos por conductor ======
-echo       > Vehiculos asignados al conductor con DNI: %dni%
-pause
-goto menu_consultas
 
 :menu_multas
 cls
